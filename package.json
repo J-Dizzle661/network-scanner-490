@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.1",
+    "bootstrap": "^5.3.8",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
