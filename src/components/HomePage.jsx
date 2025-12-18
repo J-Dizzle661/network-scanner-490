@@ -1,24 +1,36 @@
-const TopBar = ()=>{
+import line from "./images/Line.svg";
+import magGlass from "./images/MagGlass.svg"
+import notifBell from "./images/notifBell.svg"
+import defaultIcon from "./images/UserIcon.svg"
+
+export const TopBar = ()=>{
     return (
-        <header className="top-bar">
-            <button className="menu-btn" aria-label="Menu">Menu</button>
-            <div className="top-title">IDS Monitor</div>
+        <div className="TopBar">
+            <SettingsIcon />
+            <div className="mainText"><h1>IDS Monitor</h1></div>
+            <SearchBar/>
+            <button className="logOut">Log Out</button>
+            <object data={notifBell} type="image/svg+xml"></object>
+            <object data={defaultIcon} type="image/svg+xml"></object>
+        </div>
+    );
+}
 
-            <div className="top-search">
-                <span className="search-icon">🔍</span>
-                <input
-                    id="search-input"
-                    type="text"
-                    placeholder="Search"
-                    autocomplete="off"
-                />
-            </div>
+const SettingsIcon = () => {
+    return (
+        <button className="settingsButton">
+            <object className="line" data={line} type="image/svg+xml"></object>
+            <object className="line" data={line} type="image/svg+xml"></object>
+            <object className="line" data={line} type="image/svg+xml"></object>
+        </button>
+    );
+}
 
-            <div className="top-actions">
-                <button className="top-btn">Log Out</button>
-                <button className="icon-btn" title="Notifications">🔔</button>
-                <button className="icon-btn" title="Profile">⚫</button>
-            </div>
-         </header>
+const SearchBar = () => {
+    return (
+        <div className="searchBar">
+            <object className="magGlass" data={magGlass} type="image/svg+xml"></object>
+            <input type="search" placeholder="Search"/>
+        </div>
     );
 }
