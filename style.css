@@ -48,7 +48,9 @@ input{
   height: 45px;
   width: 670px;
   border-radius: 10px;
-  background-color: white;  
+  background-color: white;
+  justify-content: center;
+  display: flex;
 }
 
 .logOut{
@@ -56,4 +58,45 @@ input{
   width: 90px;
 }
 
+.notifBell{
+  background-color: var(--appColor);
+  padding: -15px;
+}
+
+.userIcon{
+  background-color: var(--appColor);
+  padding: none;
+  outline: none;
+}
+
+line{
+  height: 100px;
+  color: black;
+  border: 5px;
+}
+
+.leftContainer{
+  margin-top: 10px;
+  border-radius: 10px;
+  margin-left: 20px;
+  height: 600px;
+  width: 280px;
+  background-color: white;
+}
+
+#dashList{
+  list-style: none;
+}
+
+.dashButtons{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 45px;
+  width: 200px;
+}
+
+#dashboardButton{
+  margin-top: 30px;
+}
 
