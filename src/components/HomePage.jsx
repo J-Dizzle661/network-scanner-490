@@ -6,6 +6,7 @@ import dashboardIcon from "./images/dashboardIcon.svg";
 import liveTrafficIcon from "./images/liveTrafficIcon.svg";
 import logHistoryIcon from "./images/logHistoryIcon.svg";
 import modelIcon from "./images/modelIcon.svg";
+import settingsCog from "./images/settingsCog.svg"
 
 export const TopBar = ()=>{
     return (
@@ -49,29 +50,34 @@ export const LeftContainer = ()=> {
             <ul id="dashList">
                 <li>
                     <button id="dashboardButton" className="dashButtons">
-                        <img src={dashboardIcon} alt="dashoard icon" />
-                        <h5>Dashboard</h5>
+                        <div className="imgWrapper"><img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/></div>
+                        <h5 className="dashText">Dashboard</h5>
                     </button>
                 </li>
                 <li>
                     <button id="liveTrafficButton" className="dashButtons">
-                        <img src={liveTrafficIcon} alt="live traffic icon" />
-                        <h5>Live Traffic</h5>
+                        <div className="imgWrapper"><img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/></div>
+                        <h5 className="dashText">Live Traffic</h5>
                     </button>
                 </li>
                 <li>
                     <button id="logHistoryButton" className="dashButtons">
-                        <img src={logHistoryIcon} alt="log history icon" />
-                        <h5>Log History</h5>
+                        <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
+                        <h5 className="dashText">Log History</h5>
                     </button>
                 </li>
                 <li>
                     <button id="modelButton" className="dashButtons">
-                        <img src={modelIcon} alt="model icon" />
-                        <h5>Models</h5>
+                        <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
+                        <h5 className="dashText">Models</h5>
                     </button>
                 </li>
             </ul>
+            <button id="lowerSettings">
+                <img src={settingsCog} alt="settings cog" />
+                <h5 id="settingsText">Settings</h5>
+            </button>
+
         </div>
     );
 }

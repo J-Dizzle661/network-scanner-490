@@ -86,17 +86,40 @@ line{
 
 #dashList{
   list-style: none;
+
 }
 
 .dashButtons{
   display: flex;
-  align-items: center;
-  gap: 20px;
+  align-items: left;
+  justify-content: left;
+  gap: 10px;
   height: 45px;
   width: 200px;
+  border: 1px  red;
 }
 
 #dashboardButton{
   margin-top: 30px;
 }
 
+.imgWrapper{
+  height: 100;
+  width: 900;
+  border: 2px solid red;
+  overflow: hidden;
+}
+.dashText{
+  align-self: flex-end;
+}
+
+#lowerSettings{
+  display: flex;
+  margin-top: 365px; 
+  margin-left: 30px;
+  gap: 10px;
+}
+
+#settingsText{
+  align-self: flex-end;
+}
