@@ -8,11 +8,23 @@ button{
   background-color: white;
 }
 
+input{
+  border-radius: 10px;
+}
+
+div{
+  border-radius: 10px;
+}
+
 .settingsButton{
   background-color: var(--appColor);
 }
 
- html{
+html, body{
+  font-family: inter;
+}
+
+html{
   min-height: 100vh;
   min-width: 100vw;
   margin: 0px;
@@ -44,13 +56,29 @@ input{
   width: 630px;
 }
 
-.searchBar{
+#searchWrapper{
+  background-color: var(--appColor);
+  border-radius: 0px;
+  height: 55px;
+  width: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchBarWrapper{
   height: 45px;
   width: 670px;
   border-radius: 10px;
   background-color: white;
   justify-content: center;
   display: flex;
+}
+
+#searchBar{
+  display: flex;
+  align-self: center;
+  height: 40px;
 }
 
 .logOut{
@@ -76,8 +104,7 @@ line{
 }
 
 .leftContainer{
-  margin-top: 10px;
-  border-radius: 10px;
+  margin-top: 5px;
   margin-left: 20px;
   height: 600px;
   width: 280px;
@@ -93,10 +120,9 @@ line{
   display: flex;
   align-items: left;
   justify-content: left;
-  gap: 10px;
+  gap: 15px;
   height: 45px;
   width: 200px;
-  border: 1px  red;
 }
 
 #dashboardButton{
@@ -104,11 +130,11 @@ line{
 }
 
 .imgWrapper{
-  height: 100;
-  width: 900;
-  border: 2px solid red;
+  height: 47px;
+  width: 47px;
   overflow: hidden;
 }
+
 .dashText{
   align-self: flex-end;
 }
@@ -122,4 +148,77 @@ line{
 
 #settingsText{
   align-self: flex-end;
+}
+
+#liveTrafficText{
+  position: absolute;
+  top: 125px;
+  left: 395px;
+}
+
+#quickTrafficInfo{
+  height: 320px;
+  width: 315px;
+  position: absolute;
+  top: 185px;
+  left: 335px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.quickTrafficBox{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 85px;
+  width: 300px;
+  background-color: white;
+  overflow: hidden;
+}
+
+#alertsText{
+  position: absolute;
+  bottom: 225px;
+  left: 345px;
+}
+
+#alertTable{
+  border-radius: 10px;
+  width: 1075px;
+  position: absolute;
+  bottom: 165px;
+  left: 345px;
+  border-collapse: collapse;
+  background-color: white;
+  
+}
+
+tr{
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+#currentModelInfo{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  height: 35px;
+  width: 750px;
+  position: absolute;
+  top: 125px;
+  left: 700px;
+}
+
+#modelSelector{
+  height: 25px;
+  align-self: top;
+}
+
+#liveTrafficGraph{
+  position: absolute;
+  right: 115px;
+  top: 175px;
 }

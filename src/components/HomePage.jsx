@@ -7,13 +7,19 @@ import liveTrafficIcon from "./images/liveTrafficIcon.svg";
 import logHistoryIcon from "./images/logHistoryIcon.svg";
 import modelIcon from "./images/modelIcon.svg";
 import settingsCog from "./images/settingsCog.svg"
+import fakeTraffic from "./images/fakeTraffic.svg"
+
+let networkStatus = 'IDLE';
+let detectedThreats = '0';
+let currentThroughput = '0';
+let currentModel = 'Random Forest';
 
 export const TopBar = ()=>{
     return (
         <>
             <div className="TopBar">
                 <SettingsIcon />
-                <div className="mainText"><h1>IDS Monitor</h1></div>
+                <div className="mainText"><h3>IDS Monitor</h3></div>
                 <SearchBar/>
                 <button className="logOut">Log Out</button>
                 <button className="notifBell" type="button"><img src={notifBell} alt="Notification Bell" /></button>
@@ -37,9 +43,11 @@ const SettingsIcon = () => {
 
 const SearchBar = () => {
     return (
-        <div className="searchBar">
-            <object className="magGlass" data={magGlass} type="image/svg+xml"></object>
-            <input type="search" placeholder="Search"/>
+        <div id = "searchWrapper">
+            <div className="searchBarWrapper">
+                <object className="magGlass" data={magGlass} type="image/svg+xml"></object>
+                <input type="search" placeholder="Search" id="searchBar"/>
+            </div>
         </div>
     );
 }
@@ -81,3 +89,81 @@ export const LeftContainer = ()=> {
         </div>
     );
 }
+
+    export const QuickTrafficInfo = () => {
+        return (
+            <div id="quickTrafficInfo">
+                <div className="quickTrafficBox">
+                    <h6>Network Status</h6>
+                    <h3>{networkStatus}</h3>
+                </div>
+                <div className="quickTrafficBox">
+                    <h6>Threats Detected</h6>
+                    <h3>{detectedThreats}</h3>
+                </div>
+                <div className="quickTrafficBox">
+                    <h6>Current Throughput</h6>
+                    <h3>{currentThroughput} Kbps</h3>
+                </div>
+            </div>
+        );
+    } 
+
+    export const AlertTable = ()=> {
+        return (
+            <>
+                <table id="alertTable">
+                    <thead>
+                        <tr id = "firstRow">
+                            <th>Timestamp</th>
+                            <th>Source IP</th>
+                            <th>Prediction</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>test</td>
+                            <td>test</td>
+                            <td>test</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </>
+        );
+    }
+
+    export const CurrentModelInfo = ()=> {
+        return (
+            <div id = "currentModelInfo">
+                <h5>Current Model: [{currentModel}]</h5>
+                <label id="modelChangeLabel">
+                    <h5>Change Model: </h5>
+                </label>
+                <select name="model" id="modelSelector">
+                    <option value="randomForest">Random Forest</option>
+                    <option value="decisionTree">Decision Tree</option>
+                    <option value="KNN">K-Nearest Neighbor</option>
+                    <option value="transformer">Transformer</option>
+                </select>
+            </div>
+        );
+    }
+
+    export const LiveTrafficGraph = ()=>{
+        return(
+            <div id="liveTrafficGraph">
+                <img src={fakeTraffic} alt="fake internet traffic" />
+            </div>
+        );
+    }
