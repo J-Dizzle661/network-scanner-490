@@ -1,5 +1,6 @@
 import {createRoot} from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.css';
+import '../styles/global.css';
 import {TopBar} from './components/HomePage.jsx';
 import { LeftContainer } from './components/HomePage.jsx';
 import { QuickTrafficInfo } from './components/HomePage.jsx';
