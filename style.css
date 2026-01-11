@@ -53,7 +53,7 @@ html{
 input{
   border: none;
   height: 35px;
-  width: 630px;
+  width: 58vw;
 }
 
 #searchWrapper{
@@ -68,7 +68,7 @@ input{
 
 .searchBarWrapper{
   height: 45px;
-  width: 670px;
+  width: 60vw;
   border-radius: 10px;
   background-color: white;
   justify-content: center;
@@ -104,10 +104,12 @@ line{
 }
 
 .leftContainer{
+  position: relative;
   margin-top: 5px;
   margin-left: 20px;
-  height: 600px;
-  width: 280px;
+  height: 80vh;
+  width: 300px;
+  margin-bottom: 20px;
   background-color: white;
 }
 
@@ -140,6 +142,8 @@ line{
 }
 
 #lowerSettings{
+  position: absolute;
+  bottom: 20px;
   display: flex;
   margin-top: 365px; 
   margin-left: 30px;
@@ -181,7 +185,7 @@ line{
 
 #alertsText{
   position: absolute;
-  bottom: 225px;
+  top: 515px;
   left: 345px;
 }
 
@@ -189,7 +193,7 @@ line{
   border-radius: 10px;
   width: 1075px;
   position: absolute;
-  bottom: 165px;
+  top: 550px;
   left: 345px;
   border-collapse: collapse;
   background-color: white;
@@ -219,6 +223,6 @@ tr{
 
 #liveTrafficGraph{
   position: absolute;
-  right: 115px;
+  left: 650px;
   top: 175px;
 }
