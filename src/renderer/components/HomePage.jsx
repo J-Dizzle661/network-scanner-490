@@ -1,3 +1,4 @@
+import React from 'react';
 import line from "../components/images/Line.svg";
 import magGlass from "../components/images/MagGlass.svg";
 import notifBell from "../components/images/notifBell.svg";
@@ -164,6 +165,55 @@ export const LeftContainer = ()=> {
         return(
             <div id="liveTrafficGraph">
                 <img src={fakeTraffic} alt="fake internet traffic" />
+            </div>
+        );
+    }
+
+    export const ControlButtons = ({ onStart, onStop, interfaceValue })=> {
+        const [isRunning, setIsRunning] = React.useState(false);
+
+        const handleStart = () => {
+            setIsRunning(true);
+            onStart && onStart(interfaceValue);
+        };
+
+        const handleStop = () => {
+            setIsRunning(false);
+            onStop && onStop();
+        };
+
+        return (
+            <div id = "controlButtons">
+                <button 
+                    id="startButton" 
+                    className={isRunning ? 'control-button disabled' : 'control-button'}
+                    onClick={handleStart}
+                    disabled={isRunning}
+                >
+                    Start
+                </button>
+                <button 
+                    id="stopButton" 
+                    className={!isRunning ? 'control-button disabled' : 'control-button'}
+                    onClick={handleStop}
+                    disabled={!isRunning}
+                >
+                    Stop
+                </button>
+            </div>
+        );
+    }
+
+    export const Interface = ({ value, onChange })=> {
+        return (
+            <div id = "interface">
+                <input 
+                    type="text" 
+                    id="interfaceInput"
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="Enter interface"
+                />
             </div>
         );
     }

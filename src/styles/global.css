@@ -185,7 +185,7 @@ line{
 
 #alertsText{
   position: absolute;
-  top: 515px;
+  top: 620px;
   left: 345px;
 }
 
@@ -193,7 +193,7 @@ line{
   border-radius: 10px;
   width: 1075px;
   position: absolute;
-  top: 550px;
+  top: 650px;
   left: 345px;
   border-collapse: collapse;
   background-color: white;
@@ -225,4 +225,44 @@ tr{
   position: absolute;
   left: 650px;
   top: 175px;
+}
+
+#interface{
+  position: absolute;
+  top: 540px;
+  left: 345px;
+  width: 300px;
+}
+
+#interfaceInput{
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#controlButtons{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 575px;
+  left: 345px;
+}
+
+.control-button {
+  height: 30px;
+  padding: 5px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.control-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
