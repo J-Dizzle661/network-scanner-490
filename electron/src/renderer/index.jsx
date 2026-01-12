@@ -22,19 +22,14 @@ import { startScan, stopScan, initWebSocket } from '../utils/api.js';
  */
 const App = () => {
 
-  /**
-   * State variables
-   */
+  // State variables
   const [interfaceValue, setInterfaceValue] = React.useState('');
   const [logs, setLogs] = React.useState([]);
   const MAX_LOG_ENTRIES = 10;
 
-  /**
-   * Socket event handler functions; passed in initWebSocket() to
-   * register callbacks for incoming events from the backend server.
-   * 
-   * These functions update the UI based on incoming data.
-   */
+  // Socket event handler functions; passed in initWebSocket() to
+  // register callbacks for incoming events from the backend server.
+  // These functions update the UI based on incoming data.
   function onAlert(alert) {
     console.log("Alert received:", alert);
   }
@@ -61,18 +56,14 @@ const App = () => {
     setLogs(prevLogs => [newLogEntry, ...prevLogs].slice(0, MAX_LOG_ENTRIES));
   }
 
-  /** 
-   * Initialize WebSocket client and register handlers. Use React.userEffect()
-   * so websocket client is initialized only once on mount.
-   */
+  // Initialize WebSocket client and register handlers. Use React.userEffect()
+  // so websocket client is initialized only once on mount.
   React.useEffect(() => {
     initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData);
   }, []);
 
-  /**
-   * Event wiring; maps html doc IO -> websocket communication functions
-   * from api.js.
-   */
+  // Event wiring; maps html doc IO -> websocket communication functions
+  // from api.js.
   const handleStartScan = (interfaceValue) => {
     console.log("Start button clicked with interface:", interfaceValue);
     startScan({
@@ -104,9 +95,6 @@ const App = () => {
   );
 };
 
-/**
- * Render the App component into the root div.
- */
+// Render the App component into the root div.
 const root = createRoot(document.getElementById('root'));
 root.render(<App />);
-
