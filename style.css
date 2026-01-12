@@ -8,6 +8,17 @@ button{
   background-color: white;
 }
 
+button:hover{
+  cursor: pointer;
+  background-color: lightblue;
+
+}
+
+input:hover{
+  cursor: pointer;
+  background-color: lightblue;
+}
+
 input{
   border-radius: 10px;
 }
