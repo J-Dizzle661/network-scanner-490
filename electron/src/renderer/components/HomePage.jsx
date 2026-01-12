@@ -144,6 +144,28 @@ export const LeftContainer = ()=> {
         );
     }
 
+    export const LogsTable = ({ logs = [] }) => {
+        return (
+            <>
+                <table id="logsTable">
+                    <thead>
+                        <tr id = "firstRow">
+                            <th>Processed network flows</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {logs.map((log) => (
+                            <tr key={log.id}>
+                                <td>{log.timestamp}</td>
+                                <td>{log.message}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </>
+        );
+    }
+
     export const CurrentModelInfo = ()=> {
         return (
             <div id = "currentModelInfo">

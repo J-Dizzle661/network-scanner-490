@@ -197,7 +197,22 @@ line{
   left: 345px;
   border-collapse: collapse;
   background-color: white;
-  
+}
+
+#logsText{
+  position: absolute;
+  top: 720px;
+  left: 345px;
+}
+
+#logsTable{
+  border-radius: 10px;
+  width: 1075px;
+  position: absolute;
+  top: 750px;
+  left: 345px;
+  border-collapse: collapse;
+  background-color: white;
 }
 
 tr{

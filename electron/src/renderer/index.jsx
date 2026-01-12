@@ -10,6 +10,7 @@ import { CurrentModelInfo } from './components/HomePage.jsx';
 import { ControlButtons } from './components/HomePage.jsx';
 import { Interface } from './components/HomePage.jsx';
 import { LiveTrafficGraph } from './components/HomePage.jsx';
+import { LogsTable } from './components/HomePage.jsx';
 import ListGroup from './components/ListGroup.jsx';
 import { startScan, stopScan, initWebSocket } from '../utils/api.js';
 
@@ -25,6 +26,7 @@ const App = () => {
    * State variables
    */
   const [interfaceValue, setInterfaceValue] = React.useState('');
+  const [logs, setLogs] = React.useState([]);
   const MAX_LOG_ENTRIES = 10;
 
   /**
@@ -45,10 +47,27 @@ const App = () => {
     console.log("Scan status:", status);
   }
 
+  function onNetworkData(data) {
+    console.log("Network data received:", data);
+    
+    // Create a new log entry with timestamp and data
+    const newLogEntry = {
+      id: Date.now(),
+      timestamp: new Date().toLocaleTimeString(),
+      message: JSON.stringify(data)
+    };
+
+    // Add new entry and keep only the latest MAX_LOG_ENTRIES
+    setLogs(prevLogs => [newLogEntry, ...prevLogs].slice(0, MAX_LOG_ENTRIES));
+  }
+
   /** 
-   * Initialize WebSocket client and register handlers
+   * Initialize WebSocket client and register handlers. Use React.userEffect()
+   * so websocket client is initialized only once on mount.
    */
-  initWebSocket(onAlert, onServiceStatus, onScanStatus);
+  React.useEffect(() => {
+    initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData);
+  }, []);
 
   /**
    * Event wiring; maps html doc IO -> websocket communication functions
@@ -75,6 +94,8 @@ const App = () => {
       <QuickTrafficInfo />
       <h5 id="alertsText">Alerts</h5>
       <AlertTable />
+      <h5 id="logsText">Logs</h5>
+      <LogsTable logs={logs} />
       <CurrentModelInfo />
       <Interface value={interfaceValue} onChange={setInterfaceValue} />
       <ControlButtons onStart={handleStartScan} onStop={handleStopScan} interfaceValue={interfaceValue} />
