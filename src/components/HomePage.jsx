@@ -14,6 +14,22 @@ let detectedThreats = '0';
 let currentThroughput = '0';
 let currentModel = 'Random Forest';
 
+export function HomePage() {
+    return (
+        <div id="homePage">
+            <TopBar/>
+            <LeftContainer/>
+            <h1 id="liveTrafficText">Live Traffic</h1>
+            <QuickTrafficInfo/>
+            <h5 id="alertsText">Alerts</h5>
+            <AlertTable/>
+            <CurrentModelInfo/>
+            <LiveTrafficGraph/>
+        </div>
+    );
+}
+        
+
 export const TopBar = ()=>{
     return (
         <>

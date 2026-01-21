@@ -7,6 +7,7 @@ import { AlertTable } from './components/HomePage.jsx';
 import { CurrentModelInfo } from './components/HomePage.jsx';
 import { LiveTrafficGraph } from './components/HomePage.jsx';
 import ListGroup from './components/ListGroup.jsx';
+import {HomePage} from './components/HomePage.jsx';
 
 const MyComponent = () => {
   return <h1> This is from react!</h1>;
@@ -15,13 +16,6 @@ const MyComponent = () => {
 const root = createRoot(document.getElementById('root'));
 root.render(
   <>
-    <TopBar/>
-    <LeftContainer/>
-    <h1 id="liveTrafficText">Live Traffic</h1>
-    <QuickTrafficInfo/>
-    <h5 id="alertsText">Alerts</h5>
-    <AlertTable/>
-    <CurrentModelInfo/>
-    <LiveTrafficGraph/>
+    <HomePage />
   </>
 );
