@@ -96,3 +96,10 @@ release/
 *.dmg
 *.AppImage
 *.asar
+# Python virtual environments
+backend/venv/
+
+# Python cache directories
+__pycache__/
+**/__pycache__/
+*.py[cod]
