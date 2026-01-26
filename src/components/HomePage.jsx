@@ -1,19 +1,34 @@
-import React from 'react';
-import line from "../components/images/Line.svg";
-import magGlass from "../components/images/MagGlass.svg";
-import notifBell from "../components/images/notifBell.svg";
-import defaultIcon from "../components/images/UserIcon.svg";
-import dashboardIcon from "../components/images/dashboardIcon.svg";
-import liveTrafficIcon from "../components/images/liveTrafficIcon.svg";
-import logHistoryIcon from "../components/images/logHistoryIcon.svg";
-import modelIcon from "../components/images/modelIcon.svg";
-import settingsCog from "../components/images/settingsCog.svg"
-import fakeTraffic from "../components/images/fakeTraffic.svg"
+import line from "./images/Line.svg";
+import magGlass from "./images/MagGlass.svg";
+import notifBell from "./images/notifBell.svg";
+import defaultIcon from "./images/UserIcon.svg";
+import dashboardIcon from "./images/dashboardIcon.svg";
+import liveTrafficIcon from "./images/liveTrafficIcon.svg";
+import logHistoryIcon from "./images/logHistoryIcon.svg";
+import modelIcon from "./images/modelIcon.svg";
+import settingsCog from "./images/settingsCog.svg"
+import fakeTraffic from "./images/fakeTraffic.svg"
 
 let networkStatus = 'IDLE';
 let detectedThreats = '0';
 let currentThroughput = '0';
 let currentModel = 'Random Forest';
+
+export function HomePage() {
+    return (
+        <div id="homePage">
+            <TopBar/>
+            <LeftContainer/>
+            <h1 id="liveTrafficText">Live Traffic</h1>
+            <QuickTrafficInfo/>
+            <h5 id="alertsText">Alerts</h5>
+            <AlertTable/>
+            <CurrentModelInfo/>
+            <LiveTrafficGraph/>
+        </div>
+    );
+}
+        
 
 export const TopBar = ()=>{
     return (
@@ -144,28 +159,6 @@ export const LeftContainer = ()=> {
         );
     }
 
-    export const LogsTable = ({ logs = [] }) => {
-        return (
-            <>
-                <table id="logsTable">
-                    <thead>
-                        <tr id = "firstRow">
-                            <th>Processed network flows</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {logs.map((log) => (
-                            <tr key={log.id}>
-                                <td>{log.timestamp}</td>
-                                <td>{log.message}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </>
-        );
-    }
-
     export const CurrentModelInfo = ()=> {
         return (
             <div id = "currentModelInfo">
@@ -187,55 +180,6 @@ export const LeftContainer = ()=> {
         return(
             <div id="liveTrafficGraph">
                 <img src={fakeTraffic} alt="fake internet traffic" />
-            </div>
-        );
-    }
-
-    export const ControlButtons = ({ onStart, onStop, interfaceValue })=> {
-        const [isRunning, setIsRunning] = React.useState(false);
-
-        const handleStart = () => {
-            setIsRunning(true);
-            onStart && onStart(interfaceValue);
-        };
-
-        const handleStop = () => {
-            setIsRunning(false);
-            onStop && onStop();
-        };
-
-        return (
-            <div id = "controlButtons">
-                <button 
-                    id="startButton" 
-                    className={isRunning ? 'control-button disabled' : 'control-button'}
-                    onClick={handleStart}
-                    disabled={isRunning}
-                >
-                    Start
-                </button>
-                <button 
-                    id="stopButton" 
-                    className={!isRunning ? 'control-button disabled' : 'control-button'}
-                    onClick={handleStop}
-                    disabled={!isRunning}
-                >
-                    Stop
-                </button>
-            </div>
-        );
-    }
-
-    export const Interface = ({ value, onChange })=> {
-        return (
-            <div id = "interface">
-                <input 
-                    type="text" 
-                    id="interfaceInput"
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder="Enter interface"
-                />
             </div>
         );
     }
