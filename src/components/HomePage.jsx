@@ -1,3 +1,8 @@
+// This file contains the individual components that make up the HomePage component 
+// is seen in the Renderer.jsx file. The Components in this use the style.css file as 
+// its stylesheet.
+
+
 import line from "./images/Line.svg";
 import magGlass from "./images/MagGlass.svg";
 import notifBell from "./images/notifBell.svg";
@@ -13,7 +18,11 @@ let networkStatus = 'IDLE';
 let detectedThreats = '0';
 let currentThroughput = '0';
 let currentModel = 'Random Forest';
+const models = ['Random Forest', 'Isolation Forest', 'SVM', 'MLP','Logistic Regression'];
+const modelsJSX = models.map((model) => <option key={model}>{model}</option>)
 
+//Main component that holds all other components for the HomePage
+//This gets exported directly to Renderer.jsx
 export function HomePage() {
     return (
         <div id="homePage">
@@ -167,10 +176,7 @@ export const LeftContainer = ()=> {
                     <h5>Change Model: </h5>
                 </label>
                 <select name="model" id="modelSelector">
-                    <option value="randomForest">Random Forest</option>
-                    <option value="decisionTree">Decision Tree</option>
-                    <option value="KNN">K-Nearest Neighbor</option>
-                    <option value="transformer">Transformer</option>
+                    {modelsJSX}
                 </select>
             </div>
         );
