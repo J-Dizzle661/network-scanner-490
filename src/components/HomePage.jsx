@@ -12,6 +12,7 @@ import logHistoryIcon from "./images/logHistoryIcon.svg";
 import modelIcon from "./images/modelIcon.svg";
 import settingsCog from "./images/settingsCog.svg"
 import fakeTraffic from "./images/fakeTraffic.svg"
+//This function allows us to interact with the fe in real time and modify what is being displayed
 import { useState } from "react";
 
 let networkStatus = 'IDLE';
@@ -47,9 +48,11 @@ export const TopBar = ()=>{
                 <SettingsIcon />
                 <div className="mainText"><h3>IDS Monitor</h3></div>
                 <SearchBar/>
-                <button className="logOut" onClick={null}>Log Out</button>
-                <button className="notifBell" type="button"><img src={notifBell} alt="Notification Bell" /></button>
-                <button className="userIcon" type="button"><img src={defaultIcon} alt="Default User Icon" /></button>
+                <div id="topBarRightPortion">
+                    <button id="logOut" onClick={null}>Log Out</button>
+                    <button id="notifBell" type="button"><img src={notifBell} alt="Notification Bell" /></button>
+                    <button id="userIcon" type="button"><img src={defaultIcon} alt="Default User Icon" /></button>
+                </div>
             </div>
             <hr />
         </>
