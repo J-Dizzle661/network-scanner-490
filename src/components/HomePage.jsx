@@ -2,7 +2,6 @@
 // is seen in the Renderer.jsx file. The Components in this use the style.css file as 
 // its stylesheet.
 
-
 import line from "./images/Line.svg";
 import magGlass from "./images/MagGlass.svg";
 import notifBell from "./images/notifBell.svg";
@@ -18,6 +17,7 @@ let networkStatus = 'IDLE';
 let detectedThreats = '0';
 let currentThroughput = '0';
 let currentModel = 'Random Forest';
+//List of models for the dropdown menu. Can be easily modified to add more models.
 const models = ['Random Forest', 'Isolation Forest', 'SVM', 'MLP','Logistic Regression'];
 const modelsJSX = models.map((model) => <option key={model}>{model}</option>)
 
@@ -37,7 +37,7 @@ export function HomePage() {
         </div>
     );
 }
-        
+
 
 export const TopBar = ()=>{
     return (
