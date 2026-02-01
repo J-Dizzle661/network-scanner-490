@@ -12,14 +12,15 @@ import logHistoryIcon from "./images/logHistoryIcon.svg";
 import modelIcon from "./images/modelIcon.svg";
 import settingsCog from "./images/settingsCog.svg"
 import fakeTraffic from "./images/fakeTraffic.svg"
+import { useState } from "react";
 
 let networkStatus = 'IDLE';
 let detectedThreats = '0';
 let currentThroughput = '0';
-let currentModel = 'Random Forest';
+const defaultModel = 'Random Forest';
 //List of models for the dropdown menu. Can be easily modified to add more models.
 const models = ['Random Forest', 'Isolation Forest', 'SVM', 'MLP','Logistic Regression'];
-const modelsJSX = models.map((model) => <option key={model}>{model}</option>)
+const modelsJSX = models.map((model) => <option key={model}>{model}</option>);
 
 //Main component that holds all other components for the HomePage
 //This gets exported directly to Renderer.jsx
@@ -46,7 +47,7 @@ export const TopBar = ()=>{
                 <SettingsIcon />
                 <div className="mainText"><h3>IDS Monitor</h3></div>
                 <SearchBar/>
-                <button className="logOut">Log Out</button>
+                <button className="logOut" onClick={null}>Log Out</button>
                 <button className="notifBell" type="button"><img src={notifBell} alt="Notification Bell" /></button>
                 <button className="userIcon" type="button"><img src={defaultIcon} alt="Default User Icon" /></button>
             </div>
@@ -169,13 +170,14 @@ export const LeftContainer = ()=> {
     }
 
     export const CurrentModelInfo = ()=> {
+        const [currentModel, setCurrentModel] = useState(defaultModel);
         return (
             <div id = "currentModelInfo">
                 <h5>Current Model: [{currentModel}]</h5>
                 <label id="modelChangeLabel">
                     <h5>Change Model: </h5>
                 </label>
-                <select name="model" id="modelSelector">
+                <select name="model" id="modelSelector" onChange={(model)=> setCurrentModel(model.target.value)}>
                     {modelsJSX}
                 </select>
             </div>
