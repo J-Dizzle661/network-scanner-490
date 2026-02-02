@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------------------------------
 # Main backend execution entry point; initializes websocket server defined in
-# websocket_server.py
+# websocket_server.py 
 # -----------------------------------------------------------------------------
 
 from websocket_server import app, socketio
