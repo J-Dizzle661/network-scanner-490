@@ -26,10 +26,11 @@ const modelsJSX = models.map((model) => <option key={model}>{model}</option>);
 //Main component that holds all other components for the HomePage
 //This gets exported directly to Renderer.jsx
 export function HomePage() {
+   const [TopSettingsOpen, setTopSettingsOpen] = useState(false);
     return (
         <div id="homePage">
-            <TopBar/>
-            <LeftContainer/>
+            <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen={setTopSettingsOpen} />
+            <LeftContainer TopSettingsOpen={TopSettingsOpen} />
             <h1 id="liveTrafficText">Live Traffic</h1>
             <QuickTrafficInfo/>
             <h5 id="alertsText">Alerts</h5>
@@ -41,11 +42,11 @@ export function HomePage() {
 }
 
 
-export const TopBar = ()=>{
+export const TopBar = ({TopSettingsOpen, setTopSettingsOpen})=>{
     return (
         <>
             <div className="TopBar">
-                <SettingsIcon />
+                <SettingsIcon TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen={setTopSettingsOpen} />
                 <div className="mainText"><h3>IDS Monitor</h3></div>
                 <SearchBar/>
                 <div id="topBarRightPortion">
@@ -60,9 +61,9 @@ export const TopBar = ()=>{
     );
 }
 
-const SettingsIcon = () => {
+const SettingsIcon = ({TopSettingsOpen, setTopSettingsOpen}) => {
     return (
-        <button className="settingsButton">
+        <button id="settingsButton" onClick={() => setTopSettingsOpen(!TopSettingsOpen)}>
             <img className = "line" src={line} alt="line" />
             <img className = "line" src={line} alt="line" />
             <img className = "line" src={line} alt="line" />
@@ -81,30 +82,31 @@ const SearchBar = () => {
     );
 }
 
-export const LeftContainer = ()=> {
+export const LeftContainer = ({TopSettingsOpen})=> {
+    if (TopSettingsOpen === false){
     return (
-        <div className="leftContainer">
-            <ul id="dashList">
+        <div id="leftContainerOpen">
+            <ul id="dashListOpen">
                 <li>
-                    <button id="dashboardButton" className="dashButtons">
+                    <button id="dashboardButton" className="dashButtonsOpen">
                         <div className="imgWrapper"><img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/></div>
                         <h5 className="dashText">Dashboard</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="liveTrafficButton" className="dashButtons">
+                    <button id="liveTrafficButton" className="dashButtonsOpen">
                         <div className="imgWrapper"><img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/></div>
                         <h5 className="dashText">Live Traffic</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="logHistoryButton" className="dashButtons">
+                    <button id="logHistoryButton" className="dashButtonsOpen">
                         <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
                         <h5 className="dashText">Log History</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="modelButton" className="dashButtons">
+                    <button id="modelButton" className="dashButtonsOpen">
                         <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
                         <h5 className="dashText">Models</h5>
                     </button>
@@ -117,6 +119,29 @@ export const LeftContainer = ()=> {
 
         </div>
     );
+}else {
+    return (
+            <div id="leftContainerClosed">
+                <ul id="dashListClosed">
+                    <button id="dashBoardButton" className="dashButtons">
+                        <img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/>
+                    </button>
+                    <button id="liveTrafficButton" className="dashButtons">
+                        <img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/>
+                    </button>
+                    <button id="logHistoryButton" className="dashButtons">
+                        <img src={logHistoryIcon} alt="log history icon" className="dashSVG"/>
+                    </button>
+                    <button id="modelButton" className="dashButtons">
+                        <img src={modelIcon} alt="model icon" className="dashSVG"/>
+                    </button>
+                    <button id="lowerSettings" className="dashButtons">
+                        <img src={settingsCog} alt="settings cog" />
+                    </button>
+                </ul>
+            </div>
+        );
+    }
 }
 
     export const QuickTrafficInfo = () => {
