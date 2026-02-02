@@ -4,7 +4,12 @@
 
 from nfstream import NFStreamer
 
+WINDOWS_DEFAULT_INTERFACE = r"\Device\NPF_{9BBCDFEA-1D37-4FF9-9DAC-7713001E15D3}"
+
 def capture_live(interface="eth0"):
+    if interface == "eth0":
+        interface = WINDOWS_DEFAULT_INTERFACE
+
     """
     Captures live network traffic on the specified interface using NFStreamer.
     Yields flow objects as they are generated.
