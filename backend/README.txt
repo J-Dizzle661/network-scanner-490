@@ -11,6 +11,7 @@ STEPS FOR VENV CREATION
 1. Navigate to python backend root ids-app/backend/ and create the venv with the following
 command:
 python3.11 -m venv venv
+windows: py -3.11 -m venv venv
 
 If python 3.11 is not installed (verify with python3.11 --version) download from python website
 then run command.
