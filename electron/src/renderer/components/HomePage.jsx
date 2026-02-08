@@ -1,4 +1,5 @@
 import React from 'react';
+import { startScan, stopScan } from '../utils/api.js';
 import line from "../components/images/Line.svg";
 import magGlass from "../components/images/MagGlass.svg";
 import notifBell from "../components/images/notifBell.svg";
@@ -238,12 +239,14 @@ export const LeftContainer = ({ onViewChange }) => {
     const handleStart = () => {
         setIsRunning(true);
         // We pass the interface value back up to the parent
-        onStart && onStart(); 
+        if (onStart) onStart();
+        else startScan({ interface: selectedInterface, guid: '' });
     };
 
     const handleStop = () => {
         setIsRunning(false);
-        onStop && onStop();
+        if (onStop) onStop();
+        else stopScan();
     };
 
     return (
