@@ -6,7 +6,8 @@ import fakeTraffic from "./images/fakeTraffic.svg"
 //This function allows us to interact with the fe in real time and modify what is being displayed
 import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket } from '../../utils/api.js';
-import { TopBar, LeftContainer } from "./global.jsx";
+import { GlobalElems } from "./Global.jsx";
+
 
 
 let networkStatus = 'IDLE';
@@ -14,13 +15,11 @@ let detectedThreats = '0';
 let currentThroughput = '0';
 const defaultModel = 'Random Forest';
 //List of models for the dropdown menu. Can be easily modified to add more models.
-const models = ['Random Forest', 'Isolation Forest', 'SVM', 'MLP','Logistic Regression'];
 const modelsJSX = models.map((model) => <option key={model}>{model}</option>);
 
 //Main component that holds all other components for the HomePage
 //This gets exported directly to Renderer.jsx
 export function Dashboard() {
-   const [TopSettingsOpen, setTopSettingsOpen] = useState(false);
 
 // State variables
   const [interfaceValue, setInterfaceValue] = useState('');
@@ -79,8 +78,7 @@ export function Dashboard() {
 
     return (
         <div id="homePage">
-            <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen={setTopSettingsOpen} />
-            <LeftContainer TopSettingsOpen={TopSettingsOpen} />
+            <GlobalElems/>
             <h1 id="liveTrafficText">Live Traffic</h1>
             <QuickTrafficInfo/>
             <h5 id="alertsText">Alerts</h5>

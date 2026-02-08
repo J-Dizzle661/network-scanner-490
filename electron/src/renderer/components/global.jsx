@@ -7,8 +7,17 @@ import modelIcon from "./images/modelIcon.svg";
 import settingsCog from "./images/settingsCog.svg"
 import line from "./images/Line.svg";
 import magGlass from "./images/MagGlass.svg";
+import { useState } from "react";
 
-//export const GlobalElems  = 
+export const GlobalElems = () => {
+    const [TopSettingsOpen, setTopSettingsOpen] = useState(false);
+    return (
+        <>
+            <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen = {setTopSettingsOpen}/>
+            <LeftContainer TopSettingsOpen={TopSettingsOpen}/>
+        </>
+    );
+} 
 
 const SettingsIcon = ({TopSettingsOpen, setTopSettingsOpen}) => {
     return (
