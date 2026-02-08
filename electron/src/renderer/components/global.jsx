@@ -8,6 +8,8 @@ import settingsCog from "./images/settingsCog.svg"
 import line from "./images/Line.svg";
 import magGlass from "./images/MagGlass.svg";
 
+//export const GlobalElems  = 
+
 const SettingsIcon = ({TopSettingsOpen, setTopSettingsOpen}) => {
     return (
         <button id="settingsButton" onClick={() => setTopSettingsOpen(!TopSettingsOpen)}>
