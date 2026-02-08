@@ -6,35 +6,29 @@ import '../styles/global.css';
 // Import your components
 import { 
   TopBar, LeftContainer, QuickTrafficInfo, AlertTable, 
-  CurrentModelInfo, ControlButtons, Interface, 
+  CurrentModelInfo, ControlButtons, 
   LiveTrafficGraph, LogsTable 
 } from './components/HomePage.jsx';
 
 import SettingsPage from './components/SettingsPage.jsx'; // Import the new page
-import { startScan, stopScan, initWebSocket } from '../utils/api.js';
+import { startScan, stopScan, initWebSocket } from './utils/api.js';
+
+// In src/index.jsx
 
 const App = () => {
   // --- STATE ---
-  const [currentView, setCurrentView] = useState('dashboard'); // Tracks which page to show
-  const [interfaceValue, setInterfaceValue] = useState('');
+  const [currentView, setCurrentView] = useState('dashboard');
   const [logs, setLogs] = useState([]);
+  // New state to store the loaded settings
+  const [appSettings, setAppSettings] = useState({ captureInterface: 'Loading...', guid: '' }); 
+  
   const MAX_LOG_ENTRIES = 10;
 
-  // --- WEBSOCKET HANDLERS ---
-  function onAlert(alert) {
-    console.log("Alert received:", alert);
-  }
-
-  function onServiceStatus(status) {
-    console.log("Service status:", status);
-  }
-
-  function onScanStatus(status) {
-    console.log("Scan status:", status);
-  }
-
+  // --- WEBSOCKET HANDLERS (Keep these the same) ---
+  function onAlert(alert) { console.log("Alert received:", alert); }
+  function onServiceStatus(status) { console.log("Service status:", status); }
+  function onScanStatus(status) { console.log("Scan status:", status); }
   function onNetworkData(data) {
-    console.log("Network data received:", data);
     const newLogEntry = {
       id: Date.now(),
       timestamp: new Date().toLocaleTimeString(),
@@ -45,15 +39,43 @@ const App = () => {
 
   // --- EFFECTS ---
   useEffect(() => {
+    // 1. Initialize WebSocket
     initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData);
+
+    // 2. Load Settings from Electron Backend on Startup
+    if (window.electronAPI) {
+        window.electronAPI.loadSettings().then((savedSettings) => {
+            if (savedSettings) {
+                console.log("Settings loaded:", savedSettings);
+                setAppSettings(savedSettings);
+            } else {
+                setAppSettings({ captureInterface: 'Default (Wi-Fi)', guid: '' });
+            }
+        });
+    }
   }, []);
 
   // --- EVENT HANDLERS ---
-  const handleStartScan = (val) => {
-    console.log("Start button clicked with interface:", val);
-    startScan({ interface: val, mode: "deep" });
+  const handleStartScan = () => {
+    // 1. Get the friendly name (e.g., "Default (Wi-Fi)")
+    let targetInterface = appSettings.captureInterface;
+    
+    // 2. LOGIC CHECK: If the user picked "Default (Wi-Fi)", we MUST send the GUID.
+    // The backend scanner (NFStreamer) cannot read "Default (Wi-Fi)", it needs the ID.
+    if (targetInterface === 'Default (Wi-Fi)') {
+        console.log("Swapping friendly name for GUID...");
+        targetInterface = appSettings.guid; 
+    }
+    
+    console.log("Starting scan on:", targetInterface);
+    
+    startScan({
+      interface: targetInterface, // Now sending the GUID (e.g. "{9AAC...}")
+      guid: appSettings.guid,
+      mode: "deep"
+    });
   };
-
+  
   const handleStopScan = () => {
     console.log("Stop button clicked");
     stopScan();
@@ -61,19 +83,11 @@ const App = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      
-      {/* 1. TopBar stays at the top */}
       <TopBar />
-
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        
-        {/* 2. Sidebar controls the view */}
         <LeftContainer onViewChange={setCurrentView} />
-
-        {/* 3. Main Content Area */}
         <main style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
           
-          {/* CONDITION: If view is 'dashboard', show your original dashboard */}
           {currentView === 'dashboard' && (
             <>
               <h1 id="liveTrafficText">Live Traffic</h1>
@@ -87,18 +101,17 @@ const App = () => {
               
               <CurrentModelInfo />
               
-              <Interface value={interfaceValue} onChange={setInterfaceValue} />
+              {/* UPDATED: No more Interface input, just the new buttons */}
               <ControlButtons 
                 onStart={handleStartScan} 
                 onStop={handleStopScan} 
-                interfaceValue={interfaceValue} 
+                selectedInterface={appSettings.captureInterface} // Shows the name (e.g. "Default (Wi-Fi)")
               />
               
               <LiveTrafficGraph />
             </>
           )}
 
-          {/* CONDITION: If view is 'settings', show the new SettingsPage */}
           {currentView === 'settings' && (
             <SettingsPage />
           )}

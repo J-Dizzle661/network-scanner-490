@@ -1,9 +1,8 @@
 import { io } from 'socket.io-client';
 
-// 1. Create and Export the socket immediately
+// Renderer-local socket client to avoid importing from outside the renderer root
 export const socket = io("http://127.0.0.1:5000");
 
-// SERVER --> CLIENT
 export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData) {
     if (!socket) return;
 
@@ -32,15 +31,10 @@ export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkD
     });
 }
 
-// CLIENT --> SERVER
 export function startScan(payload) {
-    if (socket) {
-        socket.emit("start_scan", payload);
-    }
+    if (socket) socket.emit("start_scan", payload);
 }
 
 export function stopScan() {
-    if (socket) {
-        socket.emit("stop_scan");
-    }
+    if (socket) socket.emit("stop_scan");
 }

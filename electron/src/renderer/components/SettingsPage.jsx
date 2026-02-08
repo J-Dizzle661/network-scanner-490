@@ -1,50 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import './SettingsPage.css';
 
+// Try going up two levels to find utils.
+// If this still fails, check where your "utils" folder actually is.
+import { socket } from "../utils/api.js"; 
+
 const SettingsPage = () => {
-  // State for form fields
   const [formData, setFormData] = useState({
-    captureInterface: 'Default (Wi-Fi)',
-    guid: '{9AACDFEB-1D67-4EE2-0GAC-7713001E15F7}', // Default placeholder
+    captureInterface: '',
+    guid: '', 
     logPath: '',
-    startOnBoot: 'on'
+    startOnBoot: 'off'
   });
 
-  // Load saved settings on mount
+  const [availableInterfaces, setAvailableInterfaces] = useState([]);
+
   useEffect(() => {
+    // 1. Load saved settings (Electron)
     if (window.electronAPI) {
-      window.electronAPI.loadSettings().then((savedSettings) => {
-        if (savedSettings) {
-          setFormData(savedSettings);
-        }
+      window.electronAPI.loadSettings().then((saved) => {
+        if (saved) setFormData(saved);
       });
     }
+
+    // 2. Ask Python for the real network adapters
+    if (socket) {
+        socket.emit("request_interfaces");
+
+        socket.on("interface_list", (data) => {
+            console.log("Received interfaces:", data);
+            setAvailableInterfaces(data);
+            
+            // Optional: Auto-select the first one if nothing is saved
+            if (data.length > 0 && !formData.guid) {
+                setFormData(prev => ({
+                    ...prev,
+                    captureInterface: data[0].name,
+                    guid: data[0].guid
+                }));
+            }
+        });
+    }
+
+    return () => {
+        if (socket) socket.off("interface_list");
+    };
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleBrowse = async () => {
-    if (window.electronAPI) {
-      const path = await window.electronAPI.selectFolder();
-      if (path) {
-        setFormData(prev => ({ ...prev, logPath: path }));
-      }
-    } else {
-      console.warn("Electron API not available");
+  // Handle Dropdown Change
+  const handleInterfaceChange = (e) => {
+    const selectedName = e.target.value;
+    const selectedAdapter = availableInterfaces.find(adapter => adapter.name === selectedName);
+    
+    if (selectedAdapter) {
+        setFormData(prev => ({
+            ...prev,
+            captureInterface: selectedAdapter.name,
+            guid: selectedAdapter.guid 
+        }));
     }
   };
 
   const handleSave = async () => {
     if (window.electronAPI) {
       const result = await window.electronAPI.saveSettings(formData);
-      if (result.success) {
-        alert('Settings saved successfully!');
-      } else {
-        alert('Failed to save settings: ' + result.error);
-      }
+      alert(result.success ? 'Settings saved!' : 'Save failed');
     }
   };
 
@@ -52,9 +72,8 @@ const SettingsPage = () => {
     <div className="settings-container">
       <h1 className="settings-header">Application Settings</h1>
 
-      {/* --- Section 1: Network --- */}
       <div className="settings-section">
-        <div className="section-header">Network and Backend Configuration</div>
+        <div className="section-header">Network Configuration</div>
         <div className="section-body">
           
           <div className="form-group">
@@ -63,95 +82,35 @@ const SettingsPage = () => {
               className="form-control" 
               name="captureInterface" 
               value={formData.captureInterface} 
-              onChange={handleChange}
+              onChange={handleInterfaceChange}
             >
-              <option value="Default (Wi-Fi)">Default (Wi-Fi)</option>
-              <option value="Ethernet">Ethernet</option>
-              <option value="Loopback">Loopback</option>
+              <option value="" disabled>Select an interface...</option>
+              {availableInterfaces.map((adapter, index) => (
+                <option key={index} value={adapter.name}>
+                  {adapter.name}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label className="form-label">GUID:</label>
+            <label className="form-label">Target GUID:</label>
             <input 
               type="text" 
               className="form-control" 
               name="guid"
               value={formData.guid} 
-              onChange={handleChange} 
+              readOnly 
+              style={{ backgroundColor: '#e9ecef', color: '#666' }}
             />
           </div>
 
         </div>
       </div>
-
-      {/* --- Section 2: Data Management --- */}
-      <div className="settings-section">
-        <div className="section-header">Data Management</div>
-        <div className="section-body">
-          
-          <div className="form-group">
-            <label className="form-label">Local Log Storage Path:</label>
-            <div className="input-group">
-              <input 
-                type="text" 
-                className="form-control" 
-                name="logPath"
-                value={formData.logPath} 
-                readOnly 
-                placeholder="Select a folder..."
-              />
-              <button className="btn-browse" onClick={handleBrowse}>Browse...</button>
-            </div>
-          </div>
-
-          <div style={{ marginLeft: '200px' }}>
-             <button className="btn-danger">Clear Logs (local)</button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* --- Section 3: Other --- */}
-      <div className="settings-section">
-        <div className="section-header">Other</div>
-        <div className="section-body">
-          
-          <div className="form-group">
-            <label className="form-label">Start on System Boot:</label>
-            <div className="radio-group">
-              <label className="radio-option">
-                <input 
-                  type="radio" 
-                  name="startOnBoot" 
-                  value="on" 
-                  checked={formData.startOnBoot === 'on'}
-                  onChange={handleChange}
-                /> 
-                On
-              </label>
-              <label className="radio-option">
-                <input 
-                  type="radio" 
-                  name="startOnBoot" 
-                  value="off" 
-                  checked={formData.startOnBoot === 'off'}
-                  onChange={handleChange}
-                /> 
-                Off
-              </label>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* --- Footer Buttons --- */}
+      
       <div className="settings-footer">
         <button className="btn-footer" onClick={handleSave}>Save Changes</button>
-        <button className="btn-footer">Discard Changes</button>
       </div>
-
     </div>
   );
 };

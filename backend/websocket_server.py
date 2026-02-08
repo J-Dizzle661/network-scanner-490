@@ -11,6 +11,8 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit
 
+from src.utils.interface_helper import get_network_interfaces
+
 from src.services.scan_service import (
     start_scan_service,
     stop_scan_service
@@ -61,3 +63,10 @@ def handle_stop_scan():
         "service": "scan",
         "status": "stopped"
     })
+
+@socketio.on("request_interfaces")
+def handle_interface_request():
+    print("Frontend requested interface list...")
+    interfaces = get_network_interfaces()
+    # Send the list back to the frontend
+    socketio.emit("interface_list", interfaces)
