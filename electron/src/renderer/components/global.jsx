@@ -11,7 +11,8 @@ import { useState } from "react";
 
 export const GlobalElems = () => {
     const [TopSettingsOpen, setTopSettingsOpen] = useState(false);
-    return (
+    const [selectedTab, setSelectedTab] = useState();
+        return (
         <>
             <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen = {setTopSettingsOpen}/>
             <LeftContainer TopSettingsOpen={TopSettingsOpen}/>
