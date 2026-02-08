@@ -8,14 +8,21 @@ import settingsCog from "./images/settingsCog.svg"
 import line from "./images/Line.svg";
 import magGlass from "./images/MagGlass.svg";
 import { useState } from "react";
+import { Dashboard } from "./Dashboard";
+import { ModelsTab } from "./ModelsTab";
+import { LiveTrafficTab } from "./TrafficTab";
+import { LogHistoryTab } from "./LogHistTab";
+import { SettingsMenu } from "./SettingsMenu";
 
-export const GlobalElems = () => {
+export const App = () => {
     const [TopSettingsOpen, setTopSettingsOpen] = useState(false);
-    const [selectedTab, setSelectedTab] = useState();
+    const [selectedTab, setSelectedTab] = useState(<Dashboard/>);
+
         return (
         <>
             <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen = {setTopSettingsOpen}/>
-            <LeftContainer TopSettingsOpen={TopSettingsOpen}/>
+            <LeftContainer TopSettingsOpen={TopSettingsOpen} selectedTab = {selectedTab} setSelectedTab = {setSelectedTab}/>
+            {selectedTab}
         </>
     );
 } 
@@ -60,37 +67,37 @@ export const TopBar = ({TopSettingsOpen, setTopSettingsOpen})=>{
     );
 }
 
-export const LeftContainer = ({TopSettingsOpen})=> {
+export const LeftContainer = ({TopSettingsOpen, selectedTab, setSelectedTab})=> {
     if (TopSettingsOpen === false){
     return (
         <div id="leftContainerOpen">
             <ul id="dashListOpen">
                 <li>
-                    <button id="dashboardButton" className="dashButtonsOpen">
+                    <button id="dashboardButton" className="dashButtonsOpen" onClick={() => setSelectedTab(<Dashboard/>)}>
                         <div className="imgWrapper"><img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/></div>
                         <h5 className="dashText">Dashboard</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="liveTrafficButton" className="dashButtonsOpen">
+                    <button id="liveTrafficButton" className="dashButtonsOpen" onClick={()=> setSelectedTab(<LiveTrafficTab/>)}>
                         <div className="imgWrapper"><img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/></div>
                         <h5 className="dashText">Live Traffic</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="logHistoryButton" className="dashButtonsOpen">
+                    <button id="logHistoryButton" className="dashButtonsOpen" onClick={()=> setSelectedTab(<LogHistoryTab/>)}>
                         <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
                         <h5 className="dashText">Log History</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="modelButton" className="dashButtonsOpen">
+                    <button id="modelButton" className="dashButtonsOpen" onClick={() => setSelectedTab(<ModelsTab/>)}>
                         <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
                         <h5 className="dashText">Models</h5>
                     </button>
                 </li>
             </ul>
-            <button id="lowerSettings">
+            <button id="lowerSettings" onClick={()=> setSelectedTab(<SettingsMenu/>)}>
                 <img src={settingsCog} alt="settings cog" />
                 <h5 id="settingsText">Settings</h5>
             </button>

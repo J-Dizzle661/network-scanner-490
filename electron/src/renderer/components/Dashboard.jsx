@@ -6,8 +6,7 @@ import fakeTraffic from "./images/fakeTraffic.svg"
 //This function allows us to interact with the fe in real time and modify what is being displayed
 import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket } from '../../utils/api.js';
-import { GlobalElems } from "./Global.jsx";
-
+import { models } from "./ModelsTab.jsx";
 
 
 let networkStatus = 'IDLE';
@@ -78,7 +77,6 @@ export function Dashboard() {
 
     return (
         <div id="homePage">
-            <GlobalElems/>
             <h1 id="liveTrafficText">Live Traffic</h1>
             <QuickTrafficInfo/>
             <h5 id="alertsText">Alerts</h5>
