@@ -53,36 +53,77 @@ const SearchBar = () => {
     );
 }
 
-export const LeftContainer = ()=> {
+// inside src/components/HomePage.jsx
+
+// 1. Add 'onViewChange' to the props here
+// inside src/components/HomePage.jsx
+
+export const LeftContainer = ({ onViewChange }) => {
     return (
         <div className="leftContainer">
             <ul id="dashList">
+                {/* 1. Dashboard Button */}
                 <li>
-                    <button id="dashboardButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/></div>
+                    <button 
+                        id="dashboardButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={dashboardIcon} alt="dashboard icon" className="smallDashSVG"/>
+                        </div>
                         <h5 className="dashText">Dashboard</h5>
                     </button>
                 </li>
+
+                {/* 2. Live Traffic Button (Points to dashboard for now) */}
                 <li>
-                    <button id="liveTrafficButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/></div>
+                    <button 
+                        id="liveTrafficButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/>
+                        </div>
                         <h5 className="dashText">Live Traffic</h5>
                     </button>
                 </li>
+
+                {/* 3. Log History Button */}
                 <li>
-                    <button id="logHistoryButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
+                    <button 
+                        id="logHistoryButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={logHistoryIcon} alt="log history icon" className="dashSVG"/>
+                        </div>
                         <h5 className="dashText">Log History</h5>
                     </button>
                 </li>
+
+                {/* 4. Models Button */}
                 <li>
-                    <button id="modelButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
+                    <button 
+                        id="modelButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={modelIcon} alt="model icon" className="smallDashSVG"/>
+                        </div>
                         <h5 className="dashText">Models</h5>
                     </button>
                 </li>
             </ul>
-            <button id="lowerSettings">
+
+            {/* 5. Settings Button (Switches to Settings View) */}
+            <button 
+                id="lowerSettings" 
+                onClick={() => onViewChange('settings')}
+            >
                 <img src={settingsCog} alt="settings cog" />
                 <h5 id="settingsText">Settings</h5>
             </button>
