@@ -16,7 +16,7 @@ let socket = null;
 // Function to initialize websocket client and listens for socket events
 // emitted from the server.
 //
-export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData) {
+export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData, onScanSummary) {
   socket = io("http://127.0.0.1:5000");
 
   socket.on("connect", () => {
@@ -41,6 +41,10 @@ export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkD
 
   socket.on("network_data", (data) => {
     onNetworkData(data);
+  });
+
+  socket.on("scan_summary", (summary) => {
+    onScanSummary(summary);
   });
 }
 

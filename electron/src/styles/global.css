@@ -172,16 +172,74 @@ line{
   left: 395px;
 }
 
-#quickTrafficInfo{
-  height: 320px;
-  width: 315px;
+#metricsText{
   position: absolute;
-  top: 185px;
-  left: 335px;
+  top: 125px;
+  left: 395px;
+}
+
+#quickTrafficInfo{
+  height: 250px;
+  width: 315px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+}
+
+#metricsSection{
+  width: 315px;
+  position: absolute;
+  top: 165px;
+  left: 335px;
+}
+
+.metricsTabs{
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.metricsTab{
+  flex: 1;
+  padding: 6px 15px;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 10px 10px 0 0;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.metricsTab:hover{
+  background-color: lightblue;
+  border-color: #aaa;
+}
+
+.metricsTab.active{
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.metricsContent{
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#summaryInfo{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 5px;
+}
+
+.summaryBox{
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .quickTrafficBox{
@@ -189,10 +247,11 @@ line{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 85px;
+  height: 40px;
   width: 300px;
   background-color: white;
   overflow: hidden;
+  font-size: 14px;
 }
 
 #alertsText{
