@@ -20,8 +20,12 @@ _scan_running = False
 
 # Paths to saved models
 SCALER_PATH = "models/scaler.joblib"
-MODEL_PATH = "models/rf_model.joblib"
 ENCODER_PATH = "models/label_encoder.joblib"
+RF_MODEL_PATH = "models/rf_model.joblib"
+LR_MODEL_PATH = "models/lr_model.joblib"
+SVM_MODEL_PATH = "models/svm_model.joblib"
+MLP_MODEL_PATH = "models/mlp_model.joblib"
+IF_MODEL_PATH = "models/if_model.joblib"
 
 # Internal scan loop. Runs in background thread, called
 # from start_scan_service().
@@ -39,9 +43,25 @@ def _scan_loop(params, emit):
         "message": "Scan initialized"
     })
 
-    # load in preprocessor and model
+    # load in preprocessor and specific model selected by user
     preprocessor = Preprocessor(SCALER_PATH)
-    model = ModelInference(MODEL_PATH, ENCODER_PATH)
+
+    # Determine which model to load in based on user input
+    model_type = params.get("model", "randomForest") # default to randomForest if not specified
+    match model_type:
+        case "randomForest":
+            model = ModelInference(RF_MODEL_PATH, ENCODER_PATH)
+        case "logisticRegression":
+            model = ModelInference(LR_MODEL_PATH, ENCODER_PATH)
+        case "supportVectorMachine":
+            model = ModelInference(SVM_MODEL_PATH, ENCODER_PATH)
+        case "multilayerPerceptron":
+            model = ModelInference(MLP_MODEL_PATH, ENCODER_PATH)
+        case "isolationForest":
+            model = ModelInference(IF_MODEL_PATH, ENCODER_PATH)
+        case _:
+            print(f"Unknown model '{model_type}' selected; defaulting to Random Forest.")
+            model = ModelInference(RF_MODEL_PATH, ENCODER_PATH)
 
     flow_count = 0
 

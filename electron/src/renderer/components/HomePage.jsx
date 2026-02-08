@@ -166,18 +166,32 @@ export const LeftContainer = ()=> {
         );
     }
 
-    export const CurrentModelInfo = ()=> {
+    export const CurrentModelInfo = ({ value = 'randomForest', onChange })=> {
+        const modelNames = {
+            randomForest: 'Random Forest',
+            logisticRegression: 'Logistic Regression',
+            supportVectorMachine: 'Support Vector Machine',
+            multilayerPerceptron: 'Multilayer Perceptron',
+            isolationForest: 'Isolation Forest'
+        };
+
         return (
             <div id = "currentModelInfo">
-                <h5>Current Model: [{currentModel}]</h5>
+                <h5>Current Model: [{modelNames[value] || 'Random Forest'}]</h5>
                 <label id="modelChangeLabel">
                     <h5>Change Model: </h5>
                 </label>
-                <select name="model" id="modelSelector">
+                <select 
+                    name="model" 
+                    id="modelSelector"
+                    value={value}
+                    onChange={(e) => onChange && onChange(e.target.value)}
+                >
                     <option value="randomForest">Random Forest</option>
-                    <option value="decisionTree">Decision Tree</option>
-                    <option value="KNN">K-Nearest Neighbor</option>
-                    <option value="transformer">Transformer</option>
+                    <option value="logisticRegression">Logistic Regression</option>
+                    <option value="supportVectorMachine">Support Vector Machine</option>
+                    <option value="multilayerPerceptron">Multilayer Perceptron</option>
+                    <option value="isolationForest">Isolation Forest</option>
                 </select>
             </div>
         );
@@ -191,12 +205,12 @@ export const LeftContainer = ()=> {
         );
     }
 
-    export const ControlButtons = ({ onStart, onStop, interfaceValue })=> {
+    export const ControlButtons = ({ onStart, onStop, interfaceValue, selectedModel })=> {
         const [isRunning, setIsRunning] = React.useState(false);
 
         const handleStart = () => {
             setIsRunning(true);
-            onStart && onStart(interfaceValue);
+            onStart && onStart(interfaceValue, selectedModel);
         };
 
         const handleStop = () => {

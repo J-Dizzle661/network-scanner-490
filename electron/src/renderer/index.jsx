@@ -24,6 +24,7 @@ const App = () => {
 
   // State variables
   const [interfaceValue, setInterfaceValue] = React.useState('');
+  const [selectedModel, setSelectedModel] = React.useState('randomForest');
   const [logs, setLogs] = React.useState([]);
   const MAX_LOG_ENTRIES = 10;
 
@@ -64,11 +65,11 @@ const App = () => {
 
   // Event wiring; maps html doc IO -> websocket communication functions
   // from api.js.
-  const handleStartScan = (interfaceValue) => {
-    console.log("Start button clicked with interface:", interfaceValue);
+  const handleStartScan = (interfaceValue, modelValue) => {
+    console.log("Start button clicked with:", interfaceValue, modelValue);
     startScan({
       interface: interfaceValue,
-      mode: "deep"
+      model: modelValue
     });
   };
 
@@ -87,9 +88,9 @@ const App = () => {
       <AlertTable />
       <h5 id="logsText">Logs</h5>
       <LogsTable logs={logs} />
-      <CurrentModelInfo />
+      <CurrentModelInfo value={selectedModel} onChange={setSelectedModel} />
       <Interface value={interfaceValue} onChange={setInterfaceValue} />
-      <ControlButtons onStart={handleStartScan} onStop={handleStopScan} interfaceValue={interfaceValue} />
+      <ControlButtons onStart={handleStartScan} onStop={handleStopScan} interfaceValue={interfaceValue} selectedModel={selectedModel} />
       <LiveTrafficGraph />
     </>
   );
