@@ -1,35 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/global.css';
-import { TopBar } from './components/HomePage.jsx';
-import { LeftContainer } from './components/HomePage.jsx';
-import { QuickTrafficInfo } from './components/HomePage.jsx';
-import { AlertTable } from './components/HomePage.jsx';
-import { CurrentModelInfo } from './components/HomePage.jsx';
-import { ControlButtons } from './components/HomePage.jsx';
-import { Interface } from './components/HomePage.jsx';
-import { LiveTrafficGraph } from './components/HomePage.jsx';
-import { LogsTable } from './components/HomePage.jsx';
-import ListGroup from './components/ListGroup.jsx';
+
+// Import your components
+import { 
+  TopBar, LeftContainer, QuickTrafficInfo, AlertTable, 
+  CurrentModelInfo, ControlButtons, Interface, 
+  LiveTrafficGraph, LogsTable 
+} from './components/HomePage.jsx';
+
+import SettingsPage from './components/SettingsPage.jsx'; // Import the new page
 import { startScan, stopScan, initWebSocket } from '../utils/api.js';
 
-/**
- * Main App wrapper to manage shared state, event wiring, and WebSocket
- * initialization.
- * 
- * Returns the full application UI to be rendered
- */
 const App = () => {
-
-  // State variables
-  const [interfaceValue, setInterfaceValue] = React.useState('');
-  const [logs, setLogs] = React.useState([]);
+  // --- STATE ---
+  const [currentView, setCurrentView] = useState('dashboard'); // Tracks which page to show
+  const [interfaceValue, setInterfaceValue] = useState('');
+  const [logs, setLogs] = useState([]);
   const MAX_LOG_ENTRIES = 10;
 
-  // Socket event handler functions; passed in initWebSocket() to
-  // register callbacks for incoming events from the backend server.
-  // These functions update the UI based on incoming data.
+  // --- WEBSOCKET HANDLERS ---
   function onAlert(alert) {
     console.log("Alert received:", alert);
   }
@@ -44,32 +35,23 @@ const App = () => {
 
   function onNetworkData(data) {
     console.log("Network data received:", data);
-    
-    // Create a new log entry with timestamp and data
     const newLogEntry = {
       id: Date.now(),
       timestamp: new Date().toLocaleTimeString(),
       message: JSON.stringify(data)
     };
-
-    // Add new entry and keep only the latest MAX_LOG_ENTRIES
     setLogs(prevLogs => [newLogEntry, ...prevLogs].slice(0, MAX_LOG_ENTRIES));
   }
 
-  // Initialize WebSocket client and register handlers. Use React.userEffect()
-  // so websocket client is initialized only once on mount.
-  React.useEffect(() => {
+  // --- EFFECTS ---
+  useEffect(() => {
     initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData);
   }, []);
 
-  // Event wiring; maps html doc IO -> websocket communication functions
-  // from api.js.
-  const handleStartScan = (interfaceValue) => {
-    console.log("Start button clicked with interface:", interfaceValue);
-    startScan({
-      interface: interfaceValue,
-      mode: "deep"
-    });
+  // --- EVENT HANDLERS ---
+  const handleStartScan = (val) => {
+    console.log("Start button clicked with interface:", val);
+    startScan({ interface: val, mode: "deep" });
   };
 
   const handleStopScan = () => {
@@ -78,23 +60,54 @@ const App = () => {
   };
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      
+      {/* 1. TopBar stays at the top */}
       <TopBar />
-      <LeftContainer />
-      <h1 id="liveTrafficText">Live Traffic</h1>
-      <QuickTrafficInfo />
-      <h5 id="alertsText">Alerts</h5>
-      <AlertTable />
-      <h5 id="logsText">Logs</h5>
-      <LogsTable logs={logs} />
-      <CurrentModelInfo />
-      <Interface value={interfaceValue} onChange={setInterfaceValue} />
-      <ControlButtons onStart={handleStartScan} onStop={handleStopScan} interfaceValue={interfaceValue} />
-      <LiveTrafficGraph />
-    </>
+
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        
+        {/* 2. Sidebar controls the view */}
+        <LeftContainer onViewChange={setCurrentView} />
+
+        {/* 3. Main Content Area */}
+        <main style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+          
+          {/* CONDITION: If view is 'dashboard', show your original dashboard */}
+          {currentView === 'dashboard' && (
+            <>
+              <h1 id="liveTrafficText">Live Traffic</h1>
+              <QuickTrafficInfo />
+              
+              <h5 id="alertsText">Alerts</h5>
+              <AlertTable />
+              
+              <h5 id="logsText">Logs</h5>
+              <LogsTable logs={logs} />
+              
+              <CurrentModelInfo />
+              
+              <Interface value={interfaceValue} onChange={setInterfaceValue} />
+              <ControlButtons 
+                onStart={handleStartScan} 
+                onStop={handleStopScan} 
+                interfaceValue={interfaceValue} 
+              />
+              
+              <LiveTrafficGraph />
+            </>
+          )}
+
+          {/* CONDITION: If view is 'settings', show the new SettingsPage */}
+          {currentView === 'settings' && (
+            <SettingsPage />
+          )}
+
+        </main>
+      </div>
+    </div>
   );
 };
 
-// Render the App component into the root div.
 const root = createRoot(document.getElementById('root'));
 root.render(<App />);
