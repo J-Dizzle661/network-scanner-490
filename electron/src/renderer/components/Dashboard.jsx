@@ -1,92 +1,94 @@
-import React from 'react';
-import line from "../components/images/Line.svg";
-import magGlass from "../components/images/MagGlass.svg";
-import notifBell from "../components/images/notifBell.svg";
-import defaultIcon from "../components/images/UserIcon.svg";
-import dashboardIcon from "../components/images/dashboardIcon.svg";
-import liveTrafficIcon from "../components/images/liveTrafficIcon.svg";
-import logHistoryIcon from "../components/images/logHistoryIcon.svg";
-import modelIcon from "../components/images/modelIcon.svg";
-import settingsCog from "../components/images/settingsCog.svg"
-import fakeTraffic from "../components/images/fakeTraffic.svg"
+// This file contains the individual components that make up the HomePage component 
+// is seen in the Renderer.jsx file. The Components in this use the style.css file as 
+// its stylesheet.
+
+import fakeTraffic from "./images/fakeTraffic.svg"
+//This function allows us to interact with the fe in real time and modify what is being displayed
+import { useState, useEffect } from "react";
+import { startScan, stopScan, initWebSocket } from '../../utils/api.js';
+import { TopBar, LeftContainer } from "./global.jsx";
+
 
 let networkStatus = 'IDLE';
 let detectedThreats = '0';
 let currentThroughput = '0';
-let currentModel = 'Random Forest';
+const defaultModel = 'Random Forest';
+//List of models for the dropdown menu. Can be easily modified to add more models.
+const models = ['Random Forest', 'Isolation Forest', 'SVM', 'MLP','Logistic Regression'];
+const modelsJSX = models.map((model) => <option key={model}>{model}</option>);
 
-export const TopBar = ()=>{
+//Main component that holds all other components for the HomePage
+//This gets exported directly to Renderer.jsx
+export function Dashboard() {
+   const [TopSettingsOpen, setTopSettingsOpen] = useState(false);
+
+// State variables
+  const [interfaceValue, setInterfaceValue] = useState('');
+  const [logs, setLogs] = useState([]);
+  const MAX_LOG_ENTRIES = 10;
+
+  // Socket event handler functions; passed in initWebSocket() to
+  // register callbacks for incoming events from the backend server.
+  // These functions update the UI based on incoming data.
+  function onAlert(alert) {
+    console.log("Alert received:", alert);
+  }
+
+  function onServiceStatus(status) {
+    console.log("Service status:", status);
+  }
+
+  function onScanStatus(status) {
+    console.log("Scan status:", status);
+  }
+
+  function onNetworkData(data) {
+    console.log("Network data received:", data);
+    
+    // Create a new log entry with timestamp and data
+    const newLogEntry = {
+      id: Date.now(),
+      timestamp: new Date().toLocaleTimeString(),
+      message: JSON.stringify(data)
+    };
+
+    // Add new entry and keep only the latest MAX_LOG_ENTRIES
+    setLogs(prevLogs => [newLogEntry, ...prevLogs].slice(0, MAX_LOG_ENTRIES));
+  }
+
+  // Initialize WebSocket client and register handlers. Use React.userEffect()
+  // so websocket client is initialized only once on mount.
+  useEffect(() => {
+    initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData);
+  }, []);
+
+  // Event wiring; maps html doc IO -> websocket communication functions
+  // from api.js.
+  const handleStartScan = (interfaceValue) => {
+    console.log("Start button clicked with interface:", interfaceValue);
+    startScan({
+      interface: interfaceValue,
+      mode: "deep"
+    });
+  };
+
+  const handleStopScan = () => {
+    console.log("Stop button clicked");
+    stopScan();
+  };
+
     return (
-        <>
-            <div className="TopBar">
-                <SettingsIcon />
-                <div className="mainText"><h3>IDS Monitor</h3></div>
-                <SearchBar/>
-                <button className="logOut">Log Out</button>
-                <button className="notifBell" type="button"><img src={notifBell} alt="Notification Bell" /></button>
-                <button className="userIcon" type="button"><img src={defaultIcon} alt="Default User Icon" /></button>
-            </div>
-            <hr />
-        </>
-
-    );
-}
-
-const SettingsIcon = () => {
-    return (
-        <button className="settingsButton">
-            <img className = "line" src={line} alt="line" />
-            <img className = "line" src={line} alt="line" />
-            <img className = "line" src={line} alt="line" />
-        </button>
-    );
-}
-
-const SearchBar = () => {
-    return (
-        <div id = "searchWrapper">
-            <div className="searchBarWrapper">
-                <object className="magGlass" data={magGlass} type="image/svg+xml"></object>
-                <input type="search" placeholder="Search" id="searchBar"/>
-            </div>
-        </div>
-    );
-}
-
-export const LeftContainer = ()=> {
-    return (
-        <div className="leftContainer">
-            <ul id="dashList">
-                <li>
-                    <button id="dashboardButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/></div>
-                        <h5 className="dashText">Dashboard</h5>
-                    </button>
-                </li>
-                <li>
-                    <button id="liveTrafficButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/></div>
-                        <h5 className="dashText">Live Traffic</h5>
-                    </button>
-                </li>
-                <li>
-                    <button id="logHistoryButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
-                        <h5 className="dashText">Log History</h5>
-                    </button>
-                </li>
-                <li>
-                    <button id="modelButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
-                        <h5 className="dashText">Models</h5>
-                    </button>
-                </li>
-            </ul>
-            <button id="lowerSettings">
-                <img src={settingsCog} alt="settings cog" />
-                <h5 id="settingsText">Settings</h5>
-            </button>
-
+        <div id="homePage">
+            <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen={setTopSettingsOpen} />
+            <LeftContainer TopSettingsOpen={TopSettingsOpen} />
+            <h1 id="liveTrafficText">Live Traffic</h1>
+            <QuickTrafficInfo/>
+            <h5 id="alertsText">Alerts</h5>
+            <LogsTable logs={logs} />
+            <CurrentModelInfo />
+            <Interface value={interfaceValue} onChange={setInterfaceValue} />
+            <ControlButtons onStart={handleStartScan} onStop={handleStopScan} interfaceValue={interfaceValue} />
+            <LiveTrafficGraph />
         </div>
     );
 }
@@ -167,17 +169,15 @@ export const LeftContainer = ()=> {
     }
 
     export const CurrentModelInfo = ()=> {
+        const [currentModel, setCurrentModel] = useState(defaultModel);
         return (
             <div id = "currentModelInfo">
                 <h5>Current Model: [{currentModel}]</h5>
                 <label id="modelChangeLabel">
                     <h5>Change Model: </h5>
                 </label>
-                <select name="model" id="modelSelector">
-                    <option value="randomForest">Random Forest</option>
-                    <option value="decisionTree">Decision Tree</option>
-                    <option value="KNN">K-Nearest Neighbor</option>
-                    <option value="transformer">Transformer</option>
+                <select name="model" id="modelSelector" onChange={(model)=> setCurrentModel(model.target.value)}>
+                    {modelsJSX}
                 </select>
             </div>
         );
@@ -192,7 +192,7 @@ export const LeftContainer = ()=> {
     }
 
     export const ControlButtons = ({ onStart, onStop, interfaceValue })=> {
-        const [isRunning, setIsRunning] = React.useState(false);
+        const [isRunning, setIsRunning] = useState(false);
 
         const handleStart = () => {
             setIsRunning(true);
