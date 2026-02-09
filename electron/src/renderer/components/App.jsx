@@ -37,7 +37,7 @@ const SettingsIcon = ({TopSettingsOpen, setTopSettingsOpen}) => {
     );
 }
 
-const SearchBar = () => {
+export const SearchBar = () => {
     return (
         <div id = "searchWrapper">
             <div className="searchBarWrapper">

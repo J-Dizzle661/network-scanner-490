@@ -1,0 +1,56 @@
+div{
+  border-radius: 10px;
+}
+
+#modelTilesList{
+  position: absolute;
+  top: 220px;
+  left: 350px;
+
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+
+.modelInfoContainer{
+  height: 275px;
+  width: 400px;
+  position: relative;
+  left: 20px;
+  top: 20px;
+}
+
+.modelTile{
+  background-color: white;
+  border-radius: 10px;
+}
+
+.modelStats{
+  list-style: none;
+}
+
+#modelsTabHeader{
+  position: absolute;
+  top: 130px;
+  left: 350px;
+}
+
+#innerModelSearch{
+  position: absolute;
+  top: 180px;
+  left: 350px;
+  background-color: white;
+  height: 25px;
+  width: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#smallSearchBar{
+  height: 25px;
+}
