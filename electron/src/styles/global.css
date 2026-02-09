@@ -287,6 +287,9 @@ tr{
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .control-button:disabled {
