@@ -17,16 +17,27 @@ let socket = null;
 // emitted from the server.
 //
 export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData, onScanSummary) {
-  socket = io("http://127.0.0.1:5000");
+  // If socket already exists, remove all old listeners to prevent duplicates
+  if (socket) {
+    socket.off("alert");
+    socket.off("service_status");
+    socket.off("scan_status");
+    socket.off("network_data");
+    socket.off("scan_summary");
+  } else {
+    // Only create new socket connection if one doesn't exist
+    socket = io("http://127.0.0.1:5000");
 
-  socket.on("connect", () => {
-    console.log("Connected to backend WebSocket");
-  });
+    socket.on("connect", () => {
+      console.log("Connected to backend WebSocket");
+    });
 
-  socket.on("disconnect", () => {
-    console.warn("WebSocket disconnected");
-  });
+    socket.on("disconnect", () => {
+      console.warn("WebSocket disconnected");
+    });
+  }
 
+  // Register fresh listeners
   socket.on("alert", (alert) => {
     onAlert(alert);
   });
@@ -46,6 +57,17 @@ export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkD
   socket.on("scan_summary", (summary) => {
     onScanSummary(summary);
   });
+
+  // Return cleanup function
+  return () => {
+    if (socket) {
+      socket.off("alert");
+      socket.off("service_status");
+      socket.off("scan_status");
+      socket.off("network_data");
+      socket.off("scan_summary");
+    }
+  };
 }
 
 //

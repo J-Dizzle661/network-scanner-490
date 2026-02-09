@@ -128,7 +128,7 @@ export const LeftContainer = ()=> {
                     <span>Flows Processed: <strong>{metrics.flowNumber || 0}</strong></span>
                 </div>
                 <div className="quickTrafficBox">
-                    <span>Throughput: <strong>{(metrics.throughput || 0).toFixed(2)} fps</strong></span>
+                    <span>Throughput: <strong>{(metrics.throughput || 0).toFixed(2)} packets/s</strong></span>
                 </div>
                 <div className="quickTrafficBox">
                     <span>CPU Usage: <strong>{(metrics.cpuUsage || 0).toFixed(1)}%</strong></span>
@@ -161,6 +161,7 @@ export const LeftContainer = ()=> {
                         <p><strong>Total Flows:</strong> {summary.total_flows}</p>
                         <p><strong>Total Packets:</strong> {summary.total_packets}</p>
                         <p><strong>Throughput:</strong> {summary.throughput_packets_per_second} packets/sec</p>
+                        <p><strong>Avg Inference Latency:</strong> {summary.average_inference_latency_seconds ? `${(summary.average_inference_latency_seconds * 1000).toFixed(2)}ms` : 'N/A'}</p>
                         <p><strong>Model:</strong> {summary.model_type}</p>
                         <p><strong>Interface:</strong> {summary.interface}</p>
                     </div>
@@ -178,50 +179,58 @@ export const LeftContainer = ()=> {
         );
     }
 
-    export const AlertTable = ()=> {
+    export const AlertTable = ({ alerts = [] }) => {
         return (
-            <>
+            <div id="alertTableWrapper">
                 <table id="alertTable">
                     <thead>
                         <tr id = "firstRow">
-                            <th>Timestamp</th>
-                            <th>Source IP</th>
-                            <th>Prediction</th>
+                            <th>Time</th>
+                            <th>Flow #</th>
+                            <th>Predicted Label</th>
                             <th>Confidence</th>
+                            <th>Inference Latency</th>
+                            <th>Throughput</th>
+                            <th>CPU</th>
+                            <th>Memory</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {alerts.length === 0 ? (
+                            <tr>
+                                <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No alerts detected</td>
+                            </tr>
+                        ) : (
+                            alerts.map((alert) => (
+                                <tr key={alert.flowNumber}>
+                                    <td>{alert.timestamp}</td>
+                                    <td>{alert.flowNumber}</td>
+                                    <td style={{color: '#dc3545', fontWeight: 'bold'}}>{alert.label}</td>
+                                    <td>{alert.confidence}</td>
+                                    <td>{alert.latency}</td>
+                                    <td>{alert.throughput}</td>
+                                    <td>{alert.cpu}</td>
+                                    <td>{alert.memory}</td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
-            </>
+            </div>
         );
     }
 
     export const LogsTable = ({ logs = [] }) => {
         return (
-            <>
+            <div id="logsTableWrapper">
                 <table id="logsTable">
                     <thead>
                         <tr id = "firstRow">
                             <th>Time</th>
                             <th>Flow #</th>
-                            <th>Label</th>
-                            <th>Latency</th>
+                            <th>Predicted Label</th>
+                            <th>Confidence</th>
+                            <th>Inference Latency</th>
                             <th>Throughput</th>
                             <th>CPU</th>
                             <th>Memory</th>
@@ -230,14 +239,15 @@ export const LeftContainer = ()=> {
                     <tbody>
                         {logs.length === 0 ? (
                             <tr>
-                                <td colSpan="7" style={{textAlign: 'center', color: '#888'}}>No flows captured yet</td>
+                                <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No flows captured yet</td>
                             </tr>
                         ) : (
                             logs.map((log) => (
-                                <tr key={log.id}>
+                                <tr key={log.flowNumber}>
                                     <td>{log.timestamp}</td>
                                     <td>{log.flowNumber}</td>
                                     <td>{log.label}</td>
+                                    <td>{log.confidence}</td>
                                     <td>{log.latency}</td>
                                     <td>{log.throughput}</td>
                                     <td>{log.cpu}</td>
@@ -247,7 +257,7 @@ export const LeftContainer = ()=> {
                         )}
                     </tbody>
                 </table>
-            </>
+            </div>
         );
     }
 

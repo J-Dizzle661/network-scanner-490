@@ -260,30 +260,60 @@ line{
   left: 345px;
 }
 
-#alertTable{
-  border-radius: 10px;
-  width: 1075px;
+#alertTableWrapper{
   position: absolute;
   top: 650px;
   left: 345px;
+  width: 1075px;
+  max-height: 125px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+}
+
+#alertTable{
+  width: 100%;
   border-collapse: collapse;
   background-color: white;
+}
+
+#alertTable thead{
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
 }
 
 #logsText{
   position: absolute;
-  top: 720px;
+  top: 800px;
   left: 345px;
 }
 
-#logsTable{
-  border-radius: 10px;
-  width: 1075px;
+#logsTableWrapper{
   position: absolute;
-  top: 750px;
+  top: 830px;
   left: 345px;
+  width: 1075px;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+}
+
+#logsTable{
+  width: 100%;
   border-collapse: collapse;
   background-color: white;
+}
+
+#logsTable thead{
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
 }
 
 tr{

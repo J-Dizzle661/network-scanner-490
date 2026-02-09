@@ -24,6 +24,7 @@ _scan_thread = None
 _scan_running = False
 _monitor_thread = None
 _flow_logs = []  # In-memory list of flow records for current scan
+_flow_counter_lock = threading.Lock()  # Lock for thread-safe flow numbering
 
 # Hardware metrics (sliding window averages)
 _cpu_samples = deque(maxlen=10)  # Keep last 10 CPU samples
@@ -124,7 +125,7 @@ def _scan_loop(params, emit):
     total_packets = 0      # Total packets across all flows (for throughput calculation)
     scan_start_time = time.time()
     scan_end_time = 0.0
-    last_inference_time = time.time()
+    last_flow_time = time.time()
     
     # Hardware usage tracking (incremental approach for memory efficiency)
     cpu_sum = 0.0          # Running sum of CPU usage percentages
@@ -133,6 +134,10 @@ def _scan_loop(params, emit):
     memory_sum = 0.0       # Running sum of memory usage percentages
     memory_max = 0.0       # Highest memory usage percentage observed
     memory_count = 0       # Number of memory readings taken (for calculating average)
+    
+    # Inference latency tracking
+    inference_latency_sum = 0.0  # Running sum of inference latencies
+    inference_latency_count = 0  # Number of inference latency readings
 
     # In-memory list to store flow records for this scan session
     flow_logs = []
@@ -144,7 +149,12 @@ def _scan_loop(params, emit):
                 if not _scan_running:
                     break
 
-                total_flows += 1
+                # Thread-safe flow number assignment
+                with _flow_counter_lock:
+                    total_flows += 1
+                    current_flow_num = total_flows
+
+                flow_received_time = time.time()
                 
                 # Map features for this single flow
                 df_mapped = map_features(flow)
@@ -152,33 +162,46 @@ def _scan_loop(params, emit):
                 # Preprocess the mapped features (single-row DataFrame)
                 df_preprocessed = preprocessor.transform(df_mapped)
 
-                # Predict label for this single flow
-                predicted_label = model.predict(df_preprocessed)[0]
+                # Predict label and confidence for this single flow
+                predicted_labels, confidences = model.predict_with_confidence(df_preprocessed)
+                predicted_label = predicted_labels[0]
+                
+                # Extract confidence value, handling numpy types
+                conf_value = confidences[0]
+                if conf_value is None:
+                    confidence = None
+                else:
+                    # Convert numpy scalar to Python float
+                    try:
+                        confidence = float(conf_value.item()) if hasattr(conf_value, 'item') else float(conf_value)
+                    except (ValueError, AttributeError):
+                        confidence = None
 
                 # Diagnostic logging
                 # print("="*60, flush=True)
-                # print(f"[{time.strftime('%H:%M:%S')}] Raw NFStream flow (#{total_flows}):", flush=True)
+                # print(f"[{time.strftime('%H:%M:%S')}] Raw NFStream flow (#{current_flow_num}):", flush=True)
                 # try:
                 #     # flow may be a complex object; show its dict for readability
                 #     print(flow.__dict__, flush=True)
                 # except Exception:
                 #     print(str(flow), flush=True)
 
-                # print(f"[{time.strftime('%H:%M:%S')}] Feature-mapped flow (#{total_flows}):", flush=True)
+                # print(f"[{time.strftime('%H:%M:%S')}] Feature-mapped flow (#{current_flow_num}):", flush=True)
                 # print(df_mapped.loc[0].to_string(), flush=True)
 
-                # print(f"[{time.strftime('%H:%M:%S')}] Preprocessed flow (#{total_flows}):", flush=True)
+                # print(f"[{time.strftime('%H:%M:%S')}] Preprocessed flow (#{current_flow_num}):", flush=True)
                 # print(df_preprocessed.loc[0].to_string(), flush=True)
 
-                # print(f"[{time.strftime('%H:%M:%S')}] Predicted label (#{total_flows}): {predicted_label}", flush=True)
+                # print(f"[{time.strftime('%H:%M:%S')}] Predicted label (#{current_flow_num}): {predicted_label}", flush=True)
                 # print("="*60 + "\n", flush=True)
 
                 # calculate derived evaluation metrics
-                inference_latency = time.time() - last_inference_time
+                inference_latency = time.time() - flow_received_time
+                flow_latency = time.time() - last_flow_time
                 packet_count = getattr(flow, 'bidirectional_packets', 0)
                 total_packets += packet_count  # Accumulate total packets for throughput
-                throughput = packet_count / inference_latency if inference_latency > 0 else 0.0
-                last_inference_time = time.time()
+                throughput = packet_count / flow_latency if flow_latency > 0 else 0.0
+                last_flow_time = time.time()
                 
                 # Get current hardware usage and update running statistics
                 cpu_usage = _get_average_cpu()
@@ -191,12 +214,17 @@ def _scan_loop(params, emit):
                 memory_sum += memory_usage
                 memory_max = max(memory_max, memory_usage)
                 memory_count += 1
+                
+                # Track inference latency for average calculation
+                inference_latency_sum += inference_latency
+                inference_latency_count += 1
 
                 # Construct comprehensive flow log object
                 flow_log = {
                     "timestamp": datetime.now().isoformat(),
-                    "flow_number": total_flows,
+                    "flow_number": current_flow_num,
                     "predicted_label": predicted_label,
+                    "confidence": round(confidence, 4) if confidence is not None else None,
                     "inference_latency": round(inference_latency, 6),
                     "throughput": round(throughput, 2),
                     "cpu_usage_percent": round(cpu_usage, 1),
@@ -220,6 +248,7 @@ def _scan_loop(params, emit):
                 emit("network_data", {
                     "flow_number": flow_log["flow_number"],
                     "predicted_label": flow_log["predicted_label"],
+                    "confidence": flow_log["confidence"],
                     "inference_latency": flow_log["inference_latency"],
                     "throughput": flow_log["throughput"],
                     "cpu_usage_percent": flow_log["cpu_usage_percent"],
@@ -237,15 +266,8 @@ def _scan_loop(params, emit):
         cpu_avg = cpu_sum / cpu_count if cpu_count > 0 else 0.0
         memory_avg = memory_sum / memory_count if memory_count > 0 else 0.0
         total_throughput = total_packets / scan_duration if scan_duration > 0 else 0.0
+        avg_inference_latency = inference_latency_sum / inference_latency_count if inference_latency_count > 0 else 0.0
         
-        print("Scan service stopping...", flush=True)
-        print(f"Total flows captured: {total_flows}", flush=True)
-        print(f"Total packets processed: {total_packets}", flush=True)
-        print(f"Scan duration: {scan_duration:.2f} seconds", flush=True)
-        print(f"Overall throughput: {total_throughput:.2f} packets/second", flush=True)
-        print(f"CPU - Avg: {cpu_avg:.1f}%, Max: {cpu_max:.1f}%", flush=True)
-        print(f"Memory - Avg: {memory_avg:.1f}%, Max: {memory_max:.1f}%", flush=True)
-
         # Construct scan_metadata object with complete scan statistics
         scan_metadata = {
             "start_time": datetime.fromtimestamp(scan_start_time).isoformat(),
@@ -254,6 +276,7 @@ def _scan_loop(params, emit):
             "total_flows": total_flows,
             "total_packets": total_packets,
             "throughput_packets_per_second": round(total_throughput, 2),
+            "average_inference_latency_seconds": round(avg_inference_latency, 6),
             "model_type": params.get("model", "randomForest"),
             "interface": params.get("interface", "N/A"),
             "hardware_usage": {
