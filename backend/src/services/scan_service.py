@@ -4,6 +4,8 @@
 # Executes ML pipeline for basic network scan feature. Coordinates execution
 # of functions defined in src/ml_pipeline/ scripts.
 # Functions defined here are called from websocket_server.py socket event handlers.
+#
+# UPDATED: Now supports both live capture and CSV replay modes
 # -----------------------------------------------------------------------------
 
 import time
@@ -12,6 +14,7 @@ import threading
 from src.ml_pipeline.preprocessor import Preprocessor
 from src.ml_pipeline.model_inference import ModelInference
 from src.ml_pipeline.flow_capture import capture_live
+from src.ml_pipeline.flow_replay import replay_from_csv  # ADDED THIS IMPORT
 from src.ml_pipeline.feature_mapping import map_features
 
 # Global vars
@@ -23,8 +26,7 @@ SCALER_PATH = "models/scaler.joblib"
 MODEL_PATH = "models/rf_model.joblib"
 ENCODER_PATH = "models/label_encoder.joblib"
 
-# Internal scan loop. Runs in background thread, called
-# from start_scan_service().
+
 def _scan_loop(params, emit):
     """
     Long-running scan loop executed in a background thread.
@@ -33,72 +35,136 @@ def _scan_loop(params, emit):
 
     global _scan_running
 
-    print("Scan service started with params:", params)
+    mode = params.get("mode", "live")  # Default to live capture
+
+    print(f"Scan service started with params:", params)
     emit("scan_status", {
         "state": "started",
-        "message": "Scan initialized"
+        "mode": mode,
+        "message": f"Scan initialized ({mode} mode)"
     })
 
     # load in preprocessor and model
-    preprocessor = Preprocessor(SCALER_PATH)
-    model = ModelInference(MODEL_PATH, ENCODER_PATH)
+    try:
+        preprocessor = Preprocessor(SCALER_PATH)
+        model = ModelInference(MODEL_PATH, ENCODER_PATH)
+    except Exception as e:
+        emit("scan_error", {"error": f"Failed to load models: {e}"})
+        return
+
+    # Select flow source based on mode
+    try:
+        if mode == "live":
+            interface = params.get("interface")
+            if not interface:
+                emit("scan_error", {"error": "Missing interface parameter"})
+                return
+            flow_source = capture_live(interface=interface)
+
+        elif mode == "replay":
+            csv_path = params.get("csv_path")
+            if not csv_path:
+                emit("scan_error", {"error": "Missing csv_path parameter"})
+                return
+
+            delay_ms = params.get("delay_ms", 100)
+            max_flows = params.get("max_flows", None)
+
+            flow_source = replay_from_csv(
+                csv_path=csv_path,
+                delay_ms=delay_ms,
+                max_flows=max_flows
+            )
+        else:
+            emit("scan_error", {"error": f"Unknown mode: {mode}"})
+            return
+
+    except Exception as e:
+        emit("scan_error", {"error": f"Failed to initialize flow source: {e}"})
+        return
 
     flow_count = 0
 
+    # Track accuracy metrics for replay mode
+    if mode == "replay":
+        correct_predictions = 0
+        total_predictions = 0
+    
     try:
-        while _scan_running:
-            for flow in capture_live(interface=params.get("interface")):
-                # Allow cooperative shutdown even while capturing
-                if not _scan_running:
-                    break
+        # UNIFIED PROCESSING LOOP - same for both modes
+        for flow in flow_source:
+            if not _scan_running:
+                break
 
-                flow_count += 1
+            flow_count += 1
 
-                # Map features for this single flow
+            try:
+                # This works for BOTH NFStream and CSV flows!
                 df_mapped = map_features(flow)
-
-                # Preprocess the mapped features (single-row DataFrame)
                 df_preprocessed = preprocessor.transform(df_mapped)
-
-                # Predict label for this single flow
                 predicted_label = model.predict(df_preprocessed)[0]
 
-                # Diagnostic logging
-                print("="*60, flush=True)
-                print(f"[{time.strftime('%H:%M:%S')}] Raw NFStream flow (#{flow_count}):", flush=True)
-                try:
-                    # flow may be a complex object; show its dict for readability
-                    print(flow.__dict__, flush=True)
-                except Exception:
-                    print(str(flow), flush=True)
-
-                print(f"[{time.strftime('%H:%M:%S')}] Feature-mapped flow (#{flow_count}):", flush=True)
-                print(df_mapped.loc[0].to_string(), flush=True)
-
-                print(f"[{time.strftime('%H:%M:%S')}] Preprocessed flow (#{flow_count}):", flush=True)
-                print(df_preprocessed.loc[0].to_string(), flush=True)
-
-                print(f"[{time.strftime('%H:%M:%S')}] Predicted label (#{flow_count}): {predicted_label}", flush=True)
-                print("="*60 + "\n", flush=True)
-
-                # Emit network data and prediction to client
-                emit("network_data", {
+                # For replay mode, compare with ground truth
+                if mode == "replay":
+                    true_label = flow.Label if hasattr(flow, 'Label') else None
+                    
+                    if true_label:
+                        total_predictions += 1
+                        if predicted_label == true_label:
+                            correct_predictions += 1
+                        
+                        accuracy = (correct_predictions / total_predictions) * 100
+                    else:
+                        accuracy = None
+                    
+                    emit("network_data", {
+                        "flow_number": flow_count,
+                        "predicted_label": predicted_label,
+                        "true_label": true_label,
+                        "accuracy": accuracy
+                    })
+                else:
+                    # Live mode - no ground truth
+                    emit("network_data", {
+                        "flow_number": flow_count,
+                        "predicted_label": predicted_label
+                    })
+                
+                # Periodic logging
+                if flow_count % 100 == 0:
+                    if mode == "replay" and total_predictions > 0:
+                        print(f"Processed {flow_count} flows, Accuracy: {accuracy:.2f}%")
+                    else:
+                        print(f"Processed {flow_count} flows")
+                        
+            except Exception as e:
+                print(f"Error processing flow #{flow_count}: {e}")
+                emit("scan_error", {
                     "flow_number": flow_count,
-                    "predicted_label": predicted_label
+                    "error": str(e)
                 })
-
+                continue
+    
     except KeyboardInterrupt:
-        print("Scan loop interrupted by user.", flush=True)
-
+        print("Scan interrupted by user")
+    
     finally:
-        print("Scan service stopping...", flush=True)
+        if mode == "replay" and total_predictions > 0:
+            final_accuracy = (correct_predictions / total_predictions) * 100
+            print(f"Final Results: {correct_predictions}/{total_predictions} correct ({final_accuracy:.2f}%)")
+            
+            emit("scan_complete", {
+                "total_flows": flow_count,
+                "correct": correct_predictions,
+                "accuracy": final_accuracy
+            })
+        
         emit("scan_status", {
             "state": "stopped",
             "message": "Scan terminated"
         })
 
-# called from websocket_server.py "start_scan" socket event definition.
-# Uses injected emitter to send diagnostics status info to client
+
 def start_scan_service(params, emit):
     """
     Starts the IDS scan service in a background thread.
@@ -123,7 +189,7 @@ def start_scan_service(params, emit):
     )
     _scan_thread.start()
 
-# called from websocket_server.py "stop_scan" socket event definition
+
 def stop_scan_service():
     """
     Stops the IDS scan service and waits for the scan thread

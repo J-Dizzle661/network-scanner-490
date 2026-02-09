@@ -1,6 +1,8 @@
 # -----------------------------------------------------------------------------
 # Defines logic to align captured NFStream flow data to the expected training dataset
 # feature order. Missing features are derived via calculation or filled with zeros.
+# 
+# UPDATED: Now supports both NFStream flows (live) and CSV flows (replay)
 # -----------------------------------------------------------------------------
 
 import pandas as pd
@@ -131,17 +133,63 @@ NFSTREAM_MAPPED = {
     "Subflow Bwd Bytes": "dst2src_bytes"
 }
 
+
 def map_features(flow) -> pd.DataFrame:
     """
-    Aligns the NFStream captured flows to the expected training dataset feature order.
+    Aligns flow data to the expected training dataset feature order.
+    Supports both NFStream flows (live capture) and CSV flows (replay mode).
     
-    Maps a single flow object to a corresponding single-row DataFrame. Missing features
-    are filled with zeros to ensure correct model input.
     Args:
-        flow: An NFStreamer flow object.
+        flow: Either an NFStream flow object or a CSVFlow object.
+    
     Returns:
         A pandas DataFrame with a single row, containing features aligned to the
         expected dataset feature order.
+    """
+    # Detect if this is a CSV flow (has _data attribute with CICFlowMeter features)
+    if hasattr(flow, '_data') and 'Flow Duration' in flow._data:
+        # CSV replay mode - flow already has CICFlowMeter features
+        return _map_csv_flow(flow)
+    else:
+        # Live capture mode - map NFStream to CICFlowMeter
+        return _map_nfstream_flow(flow)
+
+
+def _map_csv_flow(flow) -> pd.DataFrame:
+    """
+    Extracts features from CSV flow (already in CICFlowMeter format).
+    Just needs to select and order the columns correctly.
+    
+    Args:
+        flow: CSVFlow object with _data attribute
+    
+    Returns:
+        Single-row DataFrame with features in correct order
+    """
+    # Extract only the features needed for the model in the correct order
+    feature_dict = {}
+    
+    for col in DATASET_FEATURES:
+        if col in flow._data:
+            feature_dict[col] = flow._data[col]
+        else:
+            # Fill missing features with 0
+            feature_dict[col] = 0
+    
+    # Return as single-row DataFrame
+    return pd.DataFrame([feature_dict])
+
+
+def _map_nfstream_flow(flow) -> pd.DataFrame:
+    """
+    Maps NFStream flow to CICFlowMeter feature format.
+    Handles both direct mapping and calculated features.
+    
+    Args:
+        flow: NFStream flow object
+    
+    Returns:
+        Single-row DataFrame with features in correct order
     """
     aligned = {}
 
@@ -151,8 +199,10 @@ def map_features(flow) -> pd.DataFrame:
 
     for feature in DATASET_FEATURES:
         if feature in NFSTREAM_MAPPED:
+            # Direct 1-to-1 mapping
             aligned[feature] = g(NFSTREAM_MAPPED[feature])
         else:
+            # Calculated features
             if feature == "Flow Bytes/s":
                 aligned[feature] = (g("bidirectional_bytes") / (g("bidirectional_duration_ms") or 1)) * 1000
             elif feature == "Flow Packets/s":
@@ -176,6 +226,7 @@ def map_features(flow) -> pd.DataFrame:
             elif feature == "Avg Bwd Segment Size":
                 aligned[feature] = g("dst2src_bytes") / (g("dst2src_packets") or 1)
             else:
+                # Unknown feature - fill with 0
                 aligned[feature] = 0
 
     # Return as a single-row DataFrame with index 0 to keep compatibility

@@ -37,6 +37,21 @@ def handle_connect():
 def handle_start_scan(data):
     print("Received start_scan request:", data)
 
+    # validate required parameters based on mode
+    mode = data.get("mode", "live")
+
+    if mode == "live":
+        if "interface" not in data:
+            emit("scan_error", {"error": "Missing 'interface' parameter for live mode"})
+            return
+    elif mode == "replay":
+        if "csv_path" not in data:
+            emit("scan_error", {"error": "Missing 'csv_path' parameter for replay mode"})
+            return
+    else:
+        emit("scan_error", {"error": f"Invalid mode: {mode}"})
+        return
+
     # execute scan_service.py/start_scan_service() as background task
     socketio.start_background_task(
         target=start_scan_service,  # name of function
