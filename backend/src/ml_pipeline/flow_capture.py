@@ -3,17 +3,23 @@
 # -----------------------------------------------------------------------------
 
 from nfstream import NFStreamer
+from src.utils.interface_helper import get_network_interfaces
 
-WINDOWS_DEFAULT_INTERFACE = r"\Device\NPF_{9BBCDFEA-1D37-4FF9-9DAC-7713001E15D3}"
-
-def capture_live(interface="eth0"):
-    if interface == "eth0":
-        interface = WINDOWS_DEFAULT_INTERFACE
-
+def capture_live(interface=None):
     """
     Captures live network traffic on the specified interface using NFStreamer.
+    If no interface is provided, auto-detects the first available one.
     Yields flow objects as they are generated.
     """
+    
+    # Auto-detect if not provided or empty
+    if not interface:
+        interfaces = get_network_interfaces()
+        if interfaces:
+            interface = interfaces[0]['guid']
+            print(f"No interface provided; auto-detected: {interfaces[0]['name']} ({interface})")
+        else:
+            raise ValueError("No network interfaces detected and none provided")
 
     print(f"Capturing live traffic on '{interface}'... Press Ctrl+C to stop.")
     
