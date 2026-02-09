@@ -68,7 +68,7 @@ const App = () => {
     console.log("Start button clicked with interface:", interfaceValue);
     startScan({
       interface: interfaceValue,
-      mode: "deep"
+      mode: "live"
     });
   };
 
