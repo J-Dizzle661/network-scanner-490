@@ -69,11 +69,15 @@ def _scan_loop(params, emit):
 
             delay_ms = params.get("delay_ms", 100)
             max_flows = params.get("max_flows", None)
+            start_row = params.get("start_row", None)
+            end_row = params.get("end_row", None)
 
             flow_source = replay_from_csv(
                 csv_path=csv_path,
                 delay_ms=delay_ms,
-                max_flows=max_flows
+                max_flows=max_flows,
+                start_row=start_row,
+                end_row=end_row
             )
         else:
             emit("scan_error", {"error": f"Unknown mode: {mode}"})
@@ -99,7 +103,7 @@ def _scan_loop(params, emit):
             flow_count += 1
 
             try:
-                # This works for BOTH NFStream and CSV flows!
+                # This works for BOTH NFStream and CSV flows
                 df_mapped = map_features(flow)
                 df_preprocessed = preprocessor.transform(df_mapped)
                 predicted_label = model.predict(df_preprocessed)[0]

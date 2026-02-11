@@ -3,6 +3,7 @@
 # -----------------------------------------------------------------------------
 # Replays network flows from CIC-IDS-2017 CSV files.
 # Yields flow objects compatible with the existing ML pipeline.
+# Supports selecting specific row ranges for targeted testing.
 # -----------------------------------------------------------------------------
 
 import pandas as pd
@@ -33,7 +34,9 @@ class CSVFlow:
 def replay_from_csv(
     csv_path: str,
     delay_ms: int = 100,
-    max_flows: Optional[int] = None
+    max_flows: Optional[int] = None,
+    start_row: Optional[int] = None,
+    end_row: Optional[int] = None
 ) -> Iterator[CSVFlow]:
     """
     Replays flows from a CIC-IDS-2017 CSV file.
@@ -42,14 +45,31 @@ def replay_from_csv(
         csv_path: Path to the CIC-IDS-2017 CSV file.
         delay_ms: Delay in milliseconds between yielding flows.
         max_flows: Optional maximum number of flows to replay. (None = all)
+        start_row: Optional starting row index (0-based). If specified, replay starts here.
+        end_row: Optional ending row index (0-based, exclusive). If specified, replay stops here.
         
     Yields:
         CSVFlow objects compatible with map_features()
+        
+    Note:
+        Row range takes precedence over max_flows.
+        Examples:
+            start_row=0, end_row=100      -> Rows 0-99 (first 100 rows)
+            start_row=1000, end_row=1100  -> Rows 1000-1099 (100 rows)
+            start_row=14000, end_row=14032 -> Rows 14000-14031 (32 rows)
     """
     print(f"Loading CSV from: {csv_path}")
 
     try:
-        df = pd.read_csv(csv_path)
+        # If using row range, only load those specific rows (memory efficient)
+        if start_row is not None and end_row is not None:
+            nrows = end_row - start_row
+            print(f"Loading rows {start_row} to {end_row-1} ({nrows} rows)...")
+            df = pd.read_csv(csv_path, skiprows=range(1, start_row + 1), nrows=nrows)
+        else:
+            # Load entire CSV
+            df = pd.read_csv(csv_path)
+            
     except FileNotFoundError:
         raise FileNotFoundError(f"CSV file not found: {csv_path}")
     except Exception as e:
@@ -85,9 +105,15 @@ def replay_from_csv(
         raise ValueError(f"CSV missing required columns: {missing}")
 
     print(f"Loaded {len(df)} flows from CSV.")
+    
+    # Show label distribution for the loaded rows
+    if 'Label' in df.columns:
+        print("Label distribution:")
+        for label, count in df['Label'].value_counts().items():
+            print(f"  {label}: {count}")
 
-    # Limit number of flows if specified
-    if max_flows:
+    # Apply max_flows limit if no row range was specified
+    if start_row is None and end_row is None and max_flows and len(df) > max_flows:
         df = df.head(max_flows)
         print(f"Limiting replay to {max_flows} flows")
 
