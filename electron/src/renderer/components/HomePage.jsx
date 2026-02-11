@@ -10,9 +10,6 @@ import modelIcon from "../components/images/modelIcon.svg";
 import settingsCog from "../components/images/settingsCog.svg"
 import fakeTraffic from "../components/images/fakeTraffic.svg"
 
-let networkStatus = 'IDLE';
-let detectedThreats = '0';
-let currentThroughput = '0';
 let currentModel = 'Random Forest';
 
 export const TopBar = ()=>{
@@ -91,93 +88,205 @@ export const LeftContainer = ()=> {
     );
 }
 
-    export const QuickTrafficInfo = () => {
+    export const MetricsSection = ({ metrics = {}, summary = null }) => {
+        const [activeTab, setActiveTab] = React.useState('live');
+
+        return (
+            <div id="metricsSection">
+                <div className="metricsTabs">
+                    <button 
+                        className={`metricsTab ${activeTab === 'live' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('live')}
+                    >
+                        Live
+                    </button>
+                    <button 
+                        className={`metricsTab ${activeTab === 'summary' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('summary')}
+                    >
+                        Summary
+                    </button>
+                </div>
+                <div className="metricsContent">
+                    {activeTab === 'live' && <QuickTrafficInfo metrics={metrics} />}
+                    {activeTab === 'summary' && <SummaryInfo summary={summary} />}
+                </div>
+            </div>
+        );
+    }
+
+    const QuickTrafficInfo = ({ metrics = {} }) => {
+        const networkStatus = metrics.isScanning ? 'SCANNING' : 'IDLE';
+        const statusColor = metrics.isScanning ? '#28a745' : '#6c757d';
+        
         return (
             <div id="quickTrafficInfo">
                 <div className="quickTrafficBox">
-                    <h6>Network Status</h6>
-                    <h3>{networkStatus}</h3>
+                    <span>Network Status: <strong style={{ color: statusColor }}>{networkStatus}</strong></span>
                 </div>
                 <div className="quickTrafficBox">
-                    <h6>Threats Detected</h6>
-                    <h3>{detectedThreats}</h3>
+                    <span>Flows Processed: <strong>{metrics.flowNumber || 0}</strong></span>
                 </div>
                 <div className="quickTrafficBox">
-                    <h6>Current Throughput</h6>
-                    <h3>{currentThroughput} Kbps</h3>
+                    <span>Throughput: <strong>{(metrics.throughput || 0).toFixed(2)} packets/s</strong></span>
+                </div>
+                <div className="quickTrafficBox">
+                    <span>CPU Usage: <strong>{(metrics.cpuUsage || 0).toFixed(1)}%</strong></span>
+                </div>
+                <div className="quickTrafficBox">
+                    <span>Memory Usage: <strong>{(metrics.memoryUsage || 0).toFixed(1)}%</strong></span>
                 </div>
             </div>
         );
     } 
 
-    export const AlertTable = ()=> {
+    const SummaryInfo = ({ summary = null }) => {
+        if (!summary) {
+            return (
+                <div id="summaryInfo">
+                    <div className="summaryBox">
+                        <h5>Scan Summary</h5>
+                        <p style={{color: '#888'}}>No scan completed yet. Summary will appear after a scan finishes.</p>
+                    </div>
+                </div>
+            );
+        }
+
         return (
-            <>
+            <div id="summaryInfo">
+                <div className="summaryBox">
+                    <h5>Scan Summary</h5>
+                    <div style={{marginTop: '10px'}}>
+                        <p><strong>Duration:</strong> {summary.duration_seconds}s</p>
+                        <p><strong>Total Flows:</strong> {summary.total_flows}</p>
+                        <p><strong>Total Packets:</strong> {summary.total_packets}</p>
+                        <p><strong>Throughput:</strong> {summary.throughput_packets_per_second} packets/sec</p>
+                        <p><strong>Avg Inference Latency:</strong> {summary.average_inference_latency_seconds ? `${(summary.average_inference_latency_seconds * 1000).toFixed(2)}ms` : 'N/A'}</p>
+                        <p><strong>Model:</strong> {summary.model_type}</p>
+                        <p><strong>Interface:</strong> {summary.interface}</p>
+                    </div>
+                </div>
+                <div className="summaryBox" style={{marginTop: '10px'}}>
+                    <h5>Hardware Usage</h5>
+                    <div style={{marginTop: '10px'}}>
+                        <p><strong>CPU Avg:</strong> {summary.hardware_usage?.cpu_average_percent}%</p>
+                        <p><strong>CPU Max:</strong> {summary.hardware_usage?.cpu_max_percent}%</p>
+                        <p><strong>Memory Avg:</strong> {summary.hardware_usage?.memory_average_percent}%</p>
+                        <p><strong>Memory Max:</strong> {summary.hardware_usage?.memory_max_percent}%</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    export const AlertTable = ({ alerts = [] }) => {
+        return (
+            <div id="alertTableWrapper">
                 <table id="alertTable">
                     <thead>
                         <tr id = "firstRow">
-                            <th>Timestamp</th>
-                            <th>Source IP</th>
-                            <th>Prediction</th>
+                            <th>Time</th>
+                            <th>Flow #</th>
+                            <th>Predicted Label</th>
                             <th>Confidence</th>
+                            <th>Inference Latency</th>
+                            <th>Throughput</th>
+                            <th>CPU</th>
+                            <th>Memory</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {alerts.length === 0 ? (
+                            <tr>
+                                <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No alerts detected</td>
+                            </tr>
+                        ) : (
+                            alerts.map((alert) => (
+                                <tr key={alert.flowNumber}>
+                                    <td>{alert.timestamp}</td>
+                                    <td>{alert.flowNumber}</td>
+                                    <td style={{color: '#dc3545', fontWeight: 'bold'}}>{alert.label}</td>
+                                    <td>{alert.confidence}</td>
+                                    <td>{alert.latency}</td>
+                                    <td>{alert.throughput}</td>
+                                    <td>{alert.cpu}</td>
+                                    <td>{alert.memory}</td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
-            </>
+            </div>
         );
     }
 
     export const LogsTable = ({ logs = [] }) => {
         return (
-            <>
+            <div id="logsTableWrapper">
                 <table id="logsTable">
                     <thead>
                         <tr id = "firstRow">
-                            <th>Processed network flows</th>
+                            <th>Time</th>
+                            <th>Flow #</th>
+                            <th>Predicted Label</th>
+                            <th>Confidence</th>
+                            <th>Inference Latency</th>
+                            <th>Throughput</th>
+                            <th>CPU</th>
+                            <th>Memory</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {logs.map((log) => (
-                            <tr key={log.id}>
-                                <td>{log.timestamp}</td>
-                                <td>{log.message}</td>
+                        {logs.length === 0 ? (
+                            <tr>
+                                <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No flows captured yet</td>
                             </tr>
-                        ))}
+                        ) : (
+                            logs.map((log) => (
+                                <tr key={log.flowNumber}>
+                                    <td>{log.timestamp}</td>
+                                    <td>{log.flowNumber}</td>
+                                    <td>{log.label}</td>
+                                    <td>{log.confidence}</td>
+                                    <td>{log.latency}</td>
+                                    <td>{log.throughput}</td>
+                                    <td>{log.cpu}</td>
+                                    <td>{log.memory}</td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
-            </>
+            </div>
         );
     }
 
-    export const CurrentModelInfo = ()=> {
+    export const CurrentModelInfo = ({ value = 'randomForest', onChange })=> {
+        const modelNames = {
+            randomForest: 'Random Forest',
+            logisticRegression: 'Logistic Regression',
+            supportVectorMachine: 'Support Vector Machine',
+            multilayerPerceptron: 'Multilayer Perceptron',
+            isolationForest: 'Isolation Forest'
+        };
+
         return (
             <div id = "currentModelInfo">
-                <h5>Current Model: [{currentModel}]</h5>
+                <h5>Current Model: [{modelNames[value] || 'Random Forest'}]</h5>
                 <label id="modelChangeLabel">
                     <h5>Change Model: </h5>
                 </label>
-                <select name="model" id="modelSelector">
+                <select 
+                    name="model" 
+                    id="modelSelector"
+                    value={value}
+                    onChange={(e) => onChange && onChange(e.target.value)}
+                >
                     <option value="randomForest">Random Forest</option>
-                    <option value="decisionTree">Decision Tree</option>
-                    <option value="KNN">K-Nearest Neighbor</option>
-                    <option value="transformer">Transformer</option>
+                    <option value="logisticRegression">Logistic Regression</option>
+                    <option value="supportVectorMachine">Support Vector Machine</option>
+                    <option value="multilayerPerceptron">Multilayer Perceptron</option>
+                    <option value="isolationForest">Isolation Forest</option>
                 </select>
             </div>
         );
@@ -191,12 +300,12 @@ export const LeftContainer = ()=> {
         );
     }
 
-    export const ControlButtons = ({ onStart, onStop, interfaceValue })=> {
+    export const ControlButtons = ({ onStart, onStop, interfaceValue, selectedModel })=> {
         const [isRunning, setIsRunning] = React.useState(false);
 
         const handleStart = () => {
             setIsRunning(true);
-            onStart && onStart(interfaceValue);
+            onStart && onStart(interfaceValue, selectedModel);
         };
 
         const handleStop = () => {
