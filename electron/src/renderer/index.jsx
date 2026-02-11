@@ -12,6 +12,7 @@ import {
 
 import SettingsPage from './components/SettingsPage.jsx'; // Import the new page
 import { startScan, stopScan, initWebSocket } from './utils/api.js';
+import { socket } from './utils/api.js';
 
 // In src/index.jsx
 
@@ -45,33 +46,58 @@ const App = () => {
     // 2. Load Settings from Electron Backend on Startup
     if (window.electronAPI) {
         window.electronAPI.loadSettings().then((savedSettings) => {
-            if (savedSettings) {
+            if (savedSettings && savedSettings.guid) {
                 console.log("Settings loaded:", savedSettings);
                 setAppSettings(savedSettings);
             } else {
-                setAppSettings({ captureInterface: 'Default (Wi-Fi)', guid: '' });
+                // Settings not found or incomplete, request interfaces to auto-populate
+                console.log("No saved settings or missing GUID. Requesting interfaces...");
+                if (socket) {
+                    socket.emit("request_interfaces");
+                }
             }
         });
     }
+
+    // 3. Listen for interface list updates
+    if (socket) {
+        socket.on("interface_list", (data) => {
+            console.log("App received interfaces:", data);
+            if (data.length > 0) {
+                // Auto-set the first interface if not already set
+                setAppSettings(prev => {
+                    if (prev.guid) return prev; // Keep existing if already set
+                    return {
+                        captureInterface: data[0].name,
+                        guid: data[0].guid,
+                        logPath: prev.logPath || '',
+                        startOnBoot: prev.startOnBoot || 'off'
+                    };
+                });
+            }
+        });
+    }
+
+    return () => {
+        if (socket) socket.off("interface_list");
+    };
   }, []);
 
   // --- EVENT HANDLERS ---
   const handleStartScan = () => {
-    // 1. Get the friendly name (e.g., "Default (Wi-Fi)")
-    let targetInterface = appSettings.captureInterface;
+    // Always send the GUID (which is the properly formatted interface for NFStreamer)
+    // If guid is empty or invalid, send nothing and let backend auto-detect
+    let targetInterface = appSettings.guid || null;
     
-    // 2. LOGIC CHECK: If the user picked "Default (Wi-Fi)", we MUST send the GUID.
-    // The backend scanner (NFStreamer) cannot read "Default (Wi-Fi)", it needs the ID.
-    if (targetInterface === 'Default (Wi-Fi)') {
-        console.log("Swapping friendly name for GUID...");
-        targetInterface = appSettings.guid; 
+    if (!targetInterface) {
+        console.log("No interface selected, backend will auto-detect...");
+    } else {
+        console.log("Starting scan on:", targetInterface);
     }
     
-    console.log("Starting scan on:", targetInterface);
-    
     startScan({
-      interface: targetInterface, // Now sending the GUID (e.g. "{9AAC...}")
-      guid: appSettings.guid,
+      interface: targetInterface, // Send the GUID or null for auto-detection
+      captureInterface: appSettings.captureInterface,
       mode: "deep"
     });
   };
