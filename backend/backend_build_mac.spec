@@ -1,0 +1,65 @@
+# -*- mode: python ; coding: utf-8 -*-
+
+
+a = Analysis(
+    ['app.py'],
+    pathex=[],
+    binaries=[],
+    datas=[('models', 'models')],  # Bundle ML models directory
+    hiddenimports=[
+        'sklearn',
+        'sklearn.ensemble',
+        'sklearn.tree',
+        'sklearn.linear_model',
+        'sklearn.svm',
+        'sklearn.neural_network',
+        'sklearn.preprocessing',
+        'sklearn.metrics',
+        'sklearn.utils',
+        'joblib',
+        'numpy',
+        'pandas',
+        'scipy',
+        'scipy.sparse',
+        'scipy.special',
+        'scapy',
+        'scapy.all',
+        # Flask-SocketIO threading mode dependencies
+        'simple_websocket',
+        'wsproto',
+        'wsproto.connection',
+        'wsproto.events',
+        'wsproto.extensions',
+        'wsproto.frame_protocol',
+        'wsproto.utilities',
+        'engineio.async_drivers.threading',
+    ],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    noarchive=False,
+    optimize=0,
+)
+pyz = PYZ(a.pure)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.datas,
+    [],
+    name='backend_build_mac',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)

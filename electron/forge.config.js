@@ -1,12 +1,21 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+const { chmodSync } = require('fs');
+const path = require('path');
 
 module.exports = {
   packagerConfig: {
     asar: true,
+    extraResource: [
+      'resources/backend/backend_build_mac',
+    ],
   },
   rebuildConfig: {},
   makers: [
+    // {
+    //   name: '@electron-forge/maker-dmg',  // macOS DMG installer
+    //   config: {}
+    // },
     {
       name: '@electron-forge/maker-squirrel',
       config: {},
@@ -63,4 +72,31 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  hooks: {
+    // Hook runs after packaging
+    postPackage: async (forgeConfig, options) => {
+
+      // On macOS and Linux, use "chmod" command to ensure the backend
+      // binary has execute permissions
+
+      // skip chmod on Windows
+      if (process.platform !== 'darwin' && process.platform !== 'linux') {
+        return;
+      }
+
+      // Loop through each output path
+      for (const appPath of options.outputPaths) {
+        const backendPath = path.join(
+          appPath,
+          'network-scanner.app',
+          'Contents',
+          'Resources',
+          'backend_build_mac'
+        );
+
+        // Apply "chmod" command to ensure execute permissions
+        chmodSync(backendPath, 0o755);
+      }
+    }
+  }
 };

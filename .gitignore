@@ -99,7 +99,15 @@ release/
 # Python virtual environments
 backend/venv/
 
+# PyInstaller build artifacts
+backend/build/
+backend/dist/
+
 # Python cache directories
 __pycache__/
 **/__pycache__/
 *.py[cod]
+
+# Electron backend resources (ignore contents but keep folder structure)
+electron/resources/backend/*
+!electron/resources/backend/.gitkeep

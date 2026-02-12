@@ -11,6 +11,7 @@ import threading
 import psutil
 import json
 import os
+import sys
 from collections import deque
 from datetime import datetime
 
@@ -18,6 +19,44 @@ from src.ml_pipeline.preprocessor import Preprocessor
 from src.ml_pipeline.model_inference import ModelInference
 from src.ml_pipeline.flow_capture import capture_live
 from src.ml_pipeline.feature_mapping import map_features
+
+# Helper function for PyInstaller compatibility
+def get_resource_path(relative_path):
+    """
+    Get absolute path to resource, works for both development and PyInstaller bundle.
+    When frozen by PyInstaller, resources are extracted to sys._MEIPASS.
+    In development, paths are relative to the backend/ directory.
+    """
+    if getattr(sys, 'frozen', False):
+        # Running in PyInstaller bundle
+        base_path = sys._MEIPASS
+    else:
+        # Running in development - navigate from src/services/ to backend/
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        base_path = os.path.join(base_path, '..', '..')
+    return os.path.normpath(os.path.join(base_path, relative_path))
+
+def get_writable_path(relative_path):
+    """
+    Get absolute path to writable directory (e.g., logs).
+    Priority: 1) Environment variable IDS_LOG_DIR (received as command line arg; set by Electron)
+              2) Current working directory (deployment fallback)
+              3) Backend directory (development)
+    """
+    # Check if Electron provided a log directory via environment variable
+    electron_log_dir = os.environ.get('IDS_LOG_DIR')
+    if electron_log_dir:
+        return os.path.normpath(os.path.join(electron_log_dir, relative_path))
+    
+    # Fallback behavior for standalone execution
+    if getattr(sys, 'frozen', False):
+        # Running in PyInstaller bundle - use current working directory
+        base_path = os.getcwd()
+    else:
+        # Running in development - navigate from src/services/ to backend/
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        base_path = os.path.join(base_path, '..', '..')
+    return os.path.normpath(os.path.join(base_path, relative_path))
 
 # Global vars
 _scan_thread = None
@@ -31,14 +70,14 @@ _cpu_samples = deque(maxlen=10)  # Keep last 10 CPU samples
 _memory_samples = deque(maxlen=10)  # Keep last 10 memory samples
 _metrics_lock = threading.Lock()
 
-# Paths to saved models
-SCALER_PATH = "models/scaler.joblib"
-ENCODER_PATH = "models/label_encoder.joblib"
-RF_MODEL_PATH = "models/rf_model.joblib"
-LR_MODEL_PATH = "models/lr_model.joblib"
-SVM_MODEL_PATH = "models/svm_model.joblib"
-MLP_MODEL_PATH = "models/mlp_model.joblib"
-IF_MODEL_PATH = "models/if_model.joblib"
+# Paths to saved models (PyInstaller compatible)
+SCALER_PATH = get_resource_path("models/scaler.joblib")
+ENCODER_PATH = get_resource_path("models/label_encoder.joblib")
+RF_MODEL_PATH = get_resource_path("models/rf_model.joblib")
+LR_MODEL_PATH = get_resource_path("models/lr_model.joblib")
+SVM_MODEL_PATH = get_resource_path("models/svm_model.joblib")
+MLP_MODEL_PATH = get_resource_path("models/mlp_model.joblib")
+IF_MODEL_PATH = get_resource_path("models/if_model.joblib")
 
 def _hardware_monitor_loop():
     """
@@ -293,8 +332,8 @@ def _scan_loop(params, emit):
         # Export flow logs to file
         if flow_logs:
             try:
-                # Create logs directory if it doesn't exist
-                logs_dir = "logs"
+                # Create logs directory if it doesn't exist (PyInstaller compatible)
+                logs_dir = get_writable_path("logs")
                 os.makedirs(logs_dir, exist_ok=True)
                 
                 # Generate timestamped filename

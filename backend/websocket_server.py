@@ -17,7 +17,7 @@ from src.services.scan_service import (
 )
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # 
 # CLIENT --> SERVER

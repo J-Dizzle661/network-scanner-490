@@ -27,9 +27,9 @@ this design, the user system does not require a python interpreter to execute
 uncompiled python scripts. Additionally, a particular version of python is
 needed to run the project, so enforcing it by compiling ourselves is the best
 approach. During development, the backend python service is launched manually
-as opposed to automatically by the Electron app, which would require rebuilding
-a new binary every development iteration. Instructions for running the project
-can be found at backend/README.txt
+as opposed to automatically by the Electron app, which would require
+rebuilding a new binary every development iteration. Instructions for running
+the project can be found at backend/README.txt
 
 Communication between the Electron frontend and backend python services is
 implemented via websockets. The backend initializes a websocket server and
@@ -43,4 +43,40 @@ deployment and placed in a resources folder accessible by the electron
 app main process. A detailed project structure diagram can be found at
 docs/project-structure-diagram-1-11-26.png.
 
-Further documentation located in docs/.
+Build Lifecycle
+
+To create a built executable of the app, the python backend must first be 
+packaged using pyinstaller and copied into electron's expected resources 
+folder. During the build, electron forge stores that binary in the bundled 
+app's resources location, and the electron main process accesses that
+location (if in production) to spawn the python executable. Below are more
+detailed steps.
+
+(1) Create python backend executable with pyinstaller
+    - Verify pyinstaller is installed in your local venv with the following
+     commands:
+        cd backend/                     # navigate to backend
+        source venv/bin/activate        # activate the venv
+        pip install -r requirements.txt # ensures venv has all dependencies 
+                                        # listed in requirements.txt (now 
+                                        # includes pyinstaller)
+    - Run pyinstaller using the spec file. Run the following command from
+    backend/ with the venv activate:
+        pyinstaller backend_build_mac.spec
+(2) Copy the python build into the expected electron resources folder
+    - Pyinstaller outputs the built executable in backend/dist/. Copy the  
+    file in this folder into electron/resources/backend/.
+(3) Optional: verify electron can spawn the backend process
+    - Have the electron main process use the relative path electron/resources/
+    backend to spawn the backend, and run electron through the terminal (as in
+    development) to verify the backend process can be spawned.
+(4) Build the electron app
+    - Use the following command from electron/ to run the electron forge
+    build script:
+        npm run make
+    - Electron forge places the final build artifacts in electron/out/make/...
+
+Note: gitignore is configured to ignore directories containing build files and
+artifacts generate by pyinstaller and electron forge to keep the repo clean
+(except for electron/resources/backend/ whose folder structure is preserved
+but contents ignored).
