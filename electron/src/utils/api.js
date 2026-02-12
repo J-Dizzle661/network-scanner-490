@@ -1,43 +1,24 @@
-/**
- * Defines cient websocket connection; defines initialization,
- * incoming and outgoing socket events.
- * 
- * Used by renderer process to communicate with backend server.
- * 
- * Client is initialized in renderer entry point src/renderer/index.jsx.
- */
-
 import { io } from 'socket.io-client';
 
-let socket = null;
+// Create and Export the socket immediately
+export const socket = io("http://127.0.0.1:5000");
 
-//
 // SERVER --> CLIENT
 // Function to initialize websocket client and listens for socket events
 // emitted from the server.
-//
 export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData, onScanSummary) {
-  // If socket already exists, remove all old listeners to prevent duplicates
-  if (socket) {
-    socket.off("alert");
-    socket.off("service_status");
-    socket.off("scan_status");
-    socket.off("network_data");
-    socket.off("scan_summary");
-  } else {
-    // Only create new socket connection if one doesn't exist
-    socket = io("http://127.0.0.1:5000");
+  if (!socket) return;
 
-    socket.on("connect", () => {
-      console.log("Connected to backend WebSocket");
-    });
+  // Connection handlers
+  socket.on("connect", () => {
+    console.log("Connected to backend WebSocket");
+  });
 
-    socket.on("disconnect", () => {
-      console.warn("WebSocket disconnected");
-    });
-  }
+  socket.on("disconnect", () => {
+    console.warn("WebSocket disconnected");
+  });
 
-  // Register fresh listeners
+  // Event listeners
   socket.on("alert", (alert) => {
     onAlert(alert);
   });
@@ -55,41 +36,30 @@ export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkD
   });
 
   socket.on("scan_summary", (summary) => {
-    onScanSummary(summary);
+    if (onScanSummary) {
+      onScanSummary(summary);
+    }
   });
 
   // Return cleanup function
   return () => {
-    if (socket) {
-      socket.off("alert");
-      socket.off("service_status");
-      socket.off("scan_status");
-      socket.off("network_data");
-      socket.off("scan_summary");
-    }
+    socket.off("alert");
+    socket.off("service_status");
+    socket.off("scan_status");
+    socket.off("network_data");
+    socket.off("scan_summary");
   };
 }
 
-//
 // CLIENT --> SERVER
-// Function definitions for client requests. Uses emit to send
-// requests to socket events defined in websocket_server.py.
-// Triggered from UI.
-//
 export function startScan(payload) {
-  if (!socket) {
-    console.error("WebSocket not initialized");
-    return;
+  if (socket) {
+    socket.emit("start_scan", payload);
   }
-
-  socket.emit("start_scan", payload);
 }
 
 export function stopScan() {
-  if (!socket) {
-    console.error("WebSocket not initialized");
-    return;
+  if (socket) {
+    socket.emit("stop_scan");
   }
-
-  socket.emit("stop_scan");
 }
