@@ -14,15 +14,18 @@ import { LiveTrafficTab } from "./TrafficTab";
 import { LogHistoryTab } from "./LogHistTab";
 import { SettingsMenu } from "./SettingsMenu";
 
+
 export const App = () => {
     const [TopSettingsOpen, setTopSettingsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState(<Dashboard/>);
 
         return (
         <>
-            <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen = {setTopSettingsOpen}/>
-            <LeftContainer TopSettingsOpen={TopSettingsOpen} selectedTab = {selectedTab} setSelectedTab = {setSelectedTab}/>
-            {selectedTab}
+                <div className="anchoredElement">
+                    <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen = {setTopSettingsOpen}/>
+                </div>
+                <LeftContainer TopSettingsOpen={TopSettingsOpen} selectedTab = {selectedTab} setSelectedTab = {setSelectedTab}/>
+            <div >{selectedTab}</div>
         </>
     );
 } 
@@ -85,13 +88,13 @@ export const LeftContainer = ({TopSettingsOpen, selectedTab, setSelectedTab})=> 
                     </button>
                 </li>
                 <li>
-                    <button id="logHistoryButton" className="dashButtonsOpen" onClick={()=> setSelectedTab(<LogHistoryTab/>)}>
+                    <button id="logHistoryButton" className="dashButtonsOpen" onClick={()=> setSelectedTab(<LogHistoryTab />)}>
                         <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
                         <h5 className="dashText">Log History</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="modelButton" className="dashButtonsOpen" onClick={() => setSelectedTab(<ModelsTab/>)}>
+                    <button id="modelButton" className="dashButtonsOpen" onClick={() => setSelectedTab(<ModelsTab setSelectedTab={setSelectedTab}/>)}>
                         <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
                         <h5 className="dashText">Models</h5>
                     </button>

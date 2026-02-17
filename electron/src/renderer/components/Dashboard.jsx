@@ -6,7 +6,7 @@ import fakeTraffic from "./images/fakeTraffic.svg"
 //This function allows us to interact with the fe in real time and modify what is being displayed
 import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket } from '../../utils/api.js';
-import { models } from "./ModelsTab.jsx";
+import { models, modelsMap, currentActiveModel } from "../../main/preload.js";
 
 
 let networkStatus = 'IDLE';
@@ -80,7 +80,7 @@ export function Dashboard() {
             <h1 id="liveTrafficText">Live Traffic</h1>
             <QuickTrafficInfo/>
             <h5 id="alertsText">Alerts</h5>
-            <LogsTable logs={logs} />
+            <AlertTable logs = {logs} />
             <CurrentModelInfo />
             <Interface value={interfaceValue} onChange={setInterfaceValue} />
             <ControlButtons onStart={handleStartScan} onStop={handleStopScan} interfaceValue={interfaceValue} />
@@ -108,7 +108,7 @@ export function Dashboard() {
         );
     } 
 
-    export const AlertTable = ()=> {
+    export const AlertTable = ({ logs })=> {
         return (
             <>
                 <table id="alertTable">
@@ -118,37 +118,6 @@ export function Dashboard() {
                             <th>Source IP</th>
                             <th>Prediction</th>
                             <th>Confidence</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </>
-        );
-    }
-
-    export const LogsTable = ({ logs = [] }) => {
-        return (
-            <>
-                <table id="logsTable">
-                    <thead>
-                        <tr id = "firstRow">
-                            <th>Processed network flows</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -164,15 +133,41 @@ export function Dashboard() {
         );
     }
 
+    // export const LogsTable = ({ logs }) => {   AI code im probablu getting rid of.
+    //     return (
+    //         <>
+    //             <table id="logsTable">
+    //                 <thead>
+    //                     <tr id = "firstRow">
+    //                         <th>Processed network flows</th>
+    //                     </tr>
+    //                 </thead>
+    //                 <tbody>
+    //                     {logs.map((log) => (
+    //                         <tr key={log.id}>
+    //                             <td>{log.timestamp}</td>
+    //                             <td>{log.message}</td>
+    //                         </tr>
+    //                     ))}
+    //                 </tbody>
+    //             </table>
+    //         </>
+    //     );
+    // }
+
     export const CurrentModelInfo = ()=> {
-        const [currentModel, setCurrentModel] = useState(defaultModel);
+        const [currentModel, setCurrentModel] = useState(currentActiveModel);
         return (
             <div id = "currentModelInfo">
                 <h5>Current Model: [{currentModel}]</h5>
                 <label id="modelChangeLabel">
                     <h5>Change Model: </h5>
                 </label>
-                <select name="model" id="modelSelector" onChange={(model)=> setCurrentModel(model.target.value)}>
+                <select name="model" id="modelSelector" onChange={(model)=> {
+                    setCurrentModel(model.target.value);
+                    console.log(model.target.value)
+                    modelsMap.get(model.target.value).activate();
+                }}>
                     {modelsJSX}
                 </select>
             </div>
