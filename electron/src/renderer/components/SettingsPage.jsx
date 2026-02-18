@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './SettingsPage.css';
+//import './SettingsPage.css';
 
 // Try going up two levels to find utils.
 // If this still fails, check where your "utils" folder actually is.
 import { socket } from "../utils/api.js"; 
 
-const SettingsPage = () => {
+export const SettingsPage = () => {
   const [formData, setFormData] = useState({
     captureInterface: '',
     guid: '', 
@@ -114,5 +114,3 @@ const SettingsPage = () => {
     </div>
   );
 };
-
-export default SettingsPage;

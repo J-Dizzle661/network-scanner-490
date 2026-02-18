@@ -233,52 +233,6 @@ export const LeftContainer = ({ onViewChange }) => {
         );
     }
 
-    export const ControlButtons = ({ onStart, onStop, selectedInterface }) => {
-    const [isRunning, setIsRunning] = React.useState(false);
 
-    const handleStart = () => {
-        setIsRunning(true);
-        // We pass the interface value back up to the parent
-        if (onStart) onStart();
-        else startScan({ interface: selectedInterface, guid: '' });
-    };
-
-    const handleStop = () => {
-        setIsRunning(false);
-        if (onStop) onStop();
-        else stopScan();
-    };
-
-    return (
-        <div id="controlButtons" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '20px' }}>
-            
-            {/* New Text Label */}
-            <h5 style={{ margin: 0, color: '#555' }}>
-                Start Interface: <span style={{ color: '#000', fontWeight: 'bold' }}>{selectedInterface || "None Selected"}</span>
-            </h5>
-
-            {/* Buttons */}
-            <button 
-                id="startButton" 
-                className={isRunning ? 'control-button disabled' : 'control-button'}
-                onClick={handleStart}
-                disabled={isRunning || !selectedInterface} // Disable if no interface is found
-                style={{ backgroundColor: '#28a745', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer', opacity: isRunning ? 0.6 : 1 }}
-            >
-                Start
-            </button>
-
-            <button 
-                id="stopButton" 
-                className={!isRunning ? 'control-button disabled' : 'control-button'}
-                onClick={handleStop}
-                disabled={!isRunning}
-                style={{ backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer', opacity: !isRunning ? 0.6 : 1 }}
-            >
-                Stop
-            </button>
-        </div>
-    );
-}
 
     
