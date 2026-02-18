@@ -103,3 +103,4 @@ backend/venv/
 __pycache__/
 **/__pycache__/
 *.py[cod]
+electron/package-lock.json
