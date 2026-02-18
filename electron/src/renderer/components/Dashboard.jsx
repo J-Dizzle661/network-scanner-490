@@ -6,7 +6,7 @@ import fakeTraffic from "./images/fakeTraffic.svg"
 //This function allows us to interact with the fe in real time and modify what is being displayed
 import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket } from '../../utils/api.js';
-import { models, modelsMap, currentActiveModel } from "../../main/preload.js";
+import {currentActiveModel, models, modelsMap} from "../../main/models.js";
 import React from "react";
 import { socket } from '../utils/api.js';
 

@@ -1,6 +1,6 @@
 import magGlass from "./images/magGlass.svg";
 import { useState } from "react";
-import { MLModels } from "../../main/preload.js";
+import { MLModels } from "../../main/models.js";
 
 export const ModelsTab = ({setSelectedTab})=>{
     return(
