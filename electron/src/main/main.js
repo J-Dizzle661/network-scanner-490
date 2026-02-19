@@ -136,7 +136,7 @@ app.whenReady().then(async () => {
   // for it to be ready (wait for promise to resolve).
   // Otherwise, if in development, the backend is started
   // independently.
-  console.log(`app.isPackaged: ${app.isPackaged}, calling startBackend() if packaged...`);
+  console.log(`app.isPackaged: ${app.isPackaged}, (calling startBackend() if true...)`);
   if(app.isPackaged) {
     try {
       console.log('Waiting for backend to be ready...');

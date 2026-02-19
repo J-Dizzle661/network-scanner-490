@@ -37,8 +37,11 @@ const App = () => {
     isScanning: false
   });
   const [scanSummary, setScanSummary] = React.useState(null);
+  const [trafficHistory, setTrafficHistory] = React.useState([]);
+  const [selectedMetric, setSelectedMetric] = React.useState('inferenceLatency');
   const MAX_LOG_ENTRIES = 50;
   const MAX_ALERT_ENTRIES = 50;
+  const MAX_GRAPH_POINTS = 30;
 
   // Socket event handler functions; passed in initWebSocket() to
   // register callbacks for incoming events from the backend server.
@@ -79,6 +82,17 @@ const App = () => {
       isScanning: true
     });
     
+    // Append a data point to the sliding window for the live graph
+    const newGraphPoint = {
+      time: new Date().toLocaleTimeString(),
+      inferenceLatency: data.inference_latency ? parseFloat((data.inference_latency * 1000).toFixed(3)) : 0,
+      throughput: data.throughput ? parseFloat(data.throughput.toFixed(2)) : 0,
+      cpuUsage: data.cpu_usage_percent || 0,
+      memoryUsage: data.memory_usage_percent || 0,
+      flowNumber: data.flow_number || 0,
+    };
+    setTrafficHistory(prev => [...prev, newGraphPoint].slice(-MAX_GRAPH_POINTS));
+
     // Create a new log entry with timestamp and formatted data
     const newLogEntry = {
       id: data.flow_number, // Use flow_number as unique ID
@@ -127,10 +141,11 @@ const App = () => {
   // from api.js.
   const handleStartScan = (interfaceValue, modelValue) => {
     console.log("Start button clicked with:", interfaceValue, modelValue);
-    // Clear logs, alerts, and summary when starting a new scan
+    // Clear logs, alerts, summary, and graph history when starting a new scan
     setLogs([]);
     setAlerts([]);
     setScanSummary(null);
+    setTrafficHistory([]);
     startScan({
       interface: interfaceValue,
       model: modelValue
@@ -146,7 +161,7 @@ const App = () => {
     <>
       <TopBar />
       <LeftContainer />
-      <h1 id="metricsText">Metrics</h1>
+      <h5 id="metricsText">Metrics</h5>
       <MetricsSection metrics={networkMetrics} summary={scanSummary} />
       <h5 id="alertsText">Alerts</h5>
       <AlertTable alerts={alerts} />
@@ -155,7 +170,7 @@ const App = () => {
       <CurrentModelInfo value={selectedModel} onChange={setSelectedModel} />
       <Interface value={interfaceValue} onChange={setInterfaceValue} />
       <ControlButtons onStart={handleStartScan} onStop={handleStopScan} interfaceValue={interfaceValue} selectedModel={selectedModel} />
-      <LiveTrafficGraph />
+      <LiveTrafficGraph history={trafficHistory} selectedMetric={selectedMetric} onMetricChange={setSelectedMetric} />
     </>
   );
 };
