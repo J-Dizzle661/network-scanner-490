@@ -70,7 +70,6 @@ export const SettingsMenu = () => {
   return (
   
     <div className="settings-container">
-      {console.log("i am here")}
       <h1 className="settings-header">Application Settings</h1>
 
       <div className="settings-section">
