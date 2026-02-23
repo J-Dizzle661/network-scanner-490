@@ -10,7 +10,7 @@ import time
 # ============================================================================
 csv_path = r'C:\Users\madfi\Downloads\Compressed\GeneratedLabelledFlows\TrafficLabelling_\Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv'
 START_ROW = 19288  # First row to test (0-based index)
-END_ROW = 25288    # Last row + 1 (exclusive)
+END_ROW = 19299    # Last row + 1 (exclusive)
 # ============================================================================
 
 print("="*70)
