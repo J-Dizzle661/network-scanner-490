@@ -1,4 +1,5 @@
 import React from 'react';
+import { startScan, stopScan } from '../utils/api.js';
 import line from "../components/images/Line.svg";
 import magGlass from "../components/images/MagGlass.svg";
 import notifBell from "../components/images/notifBell.svg";
@@ -50,36 +51,77 @@ const SearchBar = () => {
     );
 }
 
-export const LeftContainer = ()=> {
+// inside src/components/HomePage.jsx
+
+// 1. Add 'onViewChange' to the props here
+// inside src/components/HomePage.jsx
+
+export const LeftContainer = ({ onViewChange }) => {
     return (
         <div className="leftContainer">
             <ul id="dashList">
+                {/* 1. Dashboard Button */}
                 <li>
-                    <button id="dashboardButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/></div>
+                    <button 
+                        id="dashboardButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={dashboardIcon} alt="dashboard icon" className="smallDashSVG"/>
+                        </div>
                         <h5 className="dashText">Dashboard</h5>
                     </button>
                 </li>
+
+                {/* 2. Live Traffic Button (Points to dashboard for now) */}
                 <li>
-                    <button id="liveTrafficButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/></div>
+                    <button 
+                        id="liveTrafficButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/>
+                        </div>
                         <h5 className="dashText">Live Traffic</h5>
                     </button>
                 </li>
+
+                {/* 3. Log History Button */}
                 <li>
-                    <button id="logHistoryButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
+                    <button 
+                        id="logHistoryButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={logHistoryIcon} alt="log history icon" className="dashSVG"/>
+                        </div>
                         <h5 className="dashText">Log History</h5>
                     </button>
                 </li>
+
+                {/* 4. Models Button */}
                 <li>
-                    <button id="modelButton" className="dashButtons">
-                        <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
+                    <button 
+                        id="modelButton" 
+                        className="dashButtons"
+                        onClick={() => onViewChange('dashboard')}
+                    >
+                        <div className="imgWrapper">
+                            <img src={modelIcon} alt="model icon" className="smallDashSVG"/>
+                        </div>
                         <h5 className="dashText">Models</h5>
                     </button>
                 </li>
             </ul>
-            <button id="lowerSettings">
+
+            {/* 5. Settings Button (Switches to Settings View) */}
+            <button 
+                id="lowerSettings" 
+                onClick={() => onViewChange('settings')}
+            >
                 <img src={settingsCog} alt="settings cog" />
                 <h5 id="settingsText">Settings</h5>
             </button>
@@ -300,51 +342,52 @@ export const LeftContainer = ()=> {
         );
     }
 
-    export const ControlButtons = ({ onStart, onStop, interfaceValue, selectedModel })=> {
-        const [isRunning, setIsRunning] = React.useState(false);
+    export const ControlButtons = ({ onStart, onStop, selectedInterface }) => {
+    const [isRunning, setIsRunning] = React.useState(false);
 
-        const handleStart = () => {
-            setIsRunning(true);
-            onStart && onStart(interfaceValue, selectedModel);
-        };
+    const handleStart = () => {
+        setIsRunning(true);
+        // We pass the interface value back up to the parent
+        if (onStart) onStart();
+        else startScan({ interface: selectedInterface, guid: '' });
+    };
 
-        const handleStop = () => {
-            setIsRunning(false);
-            onStop && onStop();
-        };
+    const handleStop = () => {
+        setIsRunning(false);
+        if (onStop) onStop();
+        else stopScan();
+    };
 
-        return (
-            <div id = "controlButtons">
-                <button 
-                    id="startButton" 
-                    className={isRunning ? 'control-button disabled' : 'control-button'}
-                    onClick={handleStart}
-                    disabled={isRunning}
-                >
-                    Start
-                </button>
-                <button 
-                    id="stopButton" 
-                    className={!isRunning ? 'control-button disabled' : 'control-button'}
-                    onClick={handleStop}
-                    disabled={!isRunning}
-                >
-                    Stop
-                </button>
-            </div>
-        );
-    }
+    return (
+        <div id="controlButtons" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '20px' }}>
+            
+            {/* New Text Label */}
+            <h5 style={{ margin: 0, color: '#555' }}>
+                Start Interface: <span style={{ color: '#000', fontWeight: 'bold' }}>{selectedInterface || "None Selected"}</span>
+            </h5>
 
-    export const Interface = ({ value, onChange })=> {
-        return (
-            <div id = "interface">
-                <input 
-                    type="text" 
-                    id="interfaceInput"
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder="Enter interface"
-                />
-            </div>
-        );
-    }
+            {/* Buttons */}
+            <button 
+                id="startButton" 
+                className={isRunning ? 'control-button disabled' : 'control-button'}
+                onClick={handleStart}
+                disabled={isRunning || !selectedInterface} // Disable if no interface is found
+                style={{ backgroundColor: '#28a745', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer', opacity: isRunning ? 0.6 : 1 }}
+            >
+                Start
+            </button>
+
+            <button 
+                id="stopButton" 
+                className={!isRunning ? 'control-button disabled' : 'control-button'}
+                onClick={handleStop}
+                disabled={!isRunning}
+                style={{ backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer', opacity: !isRunning ? 0.6 : 1 }}
+            >
+                Stop
+            </button>
+        </div>
+    );
+}
+
+    
