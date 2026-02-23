@@ -2,17 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/global.css';
-import { TopBar } from './components/HomePage.jsx';
-import { LeftContainer } from './components/HomePage.jsx';
-import { MetricsSection } from './components/HomePage.jsx';
-import { AlertTable } from './components/HomePage.jsx';
-import { CurrentModelInfo } from './components/HomePage.jsx';
-import { ControlButtons } from './components/HomePage.jsx';
-import { Interface } from './components/HomePage.jsx';
-import { LiveTrafficGraph } from './components/HomePage.jsx';
-import { LogsTable } from './components/HomePage.jsx';
-import ListGroup from './components/ListGroup.jsx';
-import { startScan, stopScan, initWebSocket } from '../utils/api.js';
+
 
 // Import your components
 import { 
@@ -47,7 +37,7 @@ const App = () => {
   });
   const [scanSummary, setScanSummary] = useState(null);
   
-  const [appSettings, setAppSettings] = userState({
+  const [appSettings, setAppSettings] = useState({
     captureInterface: 'Loading...',
     guid: ''
   });
@@ -134,7 +124,7 @@ const App = () => {
   // --- EFFECTS ---
   useEffect(() => {
     // 1. Initialize WebSocket
-    const cleanup =initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData, onScanSummary);
+    const cleanup = initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData, onScanSummary);
 
     // 2. Load Settings from Electron Backend on Startup
     if (window.electronAPI) {
@@ -199,7 +189,7 @@ const App = () => {
     startScan({
       interface: targetInterface, // Send the GUID or null for auto-detection
       captureInterface: appSettings.captureInterface,
-      mode: "live"
+      mode: "live",
       model: selectedModel
     });
   };

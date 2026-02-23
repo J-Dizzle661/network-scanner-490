@@ -157,7 +157,7 @@ export const LeftContainer = ({ onViewChange }) => {
         );
     }
 
-    const QuickTrafficInfo = ({ metrics = {} }) => {
+    export const QuickTrafficInfo = ({ metrics = {} }) => {
         const networkStatus = metrics.isScanning ? 'SCANNING' : 'IDLE';
         const statusColor = metrics.isScanning ? '#28a745' : '#6c757d';
         
