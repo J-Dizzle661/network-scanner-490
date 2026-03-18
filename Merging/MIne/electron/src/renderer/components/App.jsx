@@ -8,11 +8,11 @@ import settingsCog from "./images/settingsCog.svg"
 import line from "./images/Line.svg";
 import magGlass from "./images/MagGlass.svg";
 import { useState } from "react";
-import { Dashboard } from "./Dashboard";
-import { ModelsTab } from "./ModelsTab";
-import { LiveTrafficTab } from "./TrafficTab";
-import { LogHistoryTab } from "./LogHistTab";
-import { SettingsMenu } from "./SettingsMenu";
+import { Dashboard } from "./Dashboard.jsx";
+import { ModelsTab } from "./ModelsTab.jsx";
+import { LiveTrafficTab } from "./TrafficTab.jsx";
+import { LogHistoryTab } from "./LogHistTab.jsx";
+import { SettingsMenu } from "./SettingsMenu.jsx";
 
 
 export const App = () => {

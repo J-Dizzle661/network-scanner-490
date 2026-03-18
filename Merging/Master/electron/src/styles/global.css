@@ -1,0 +1,387 @@
+:root{
+  --appColor: #EFF3F6;
+}
+
+button{
+  border-radius: 10px;
+  border: none;
+  background-color: white;
+}
+
+button:hover{
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: lightblue;
+
+}
+
+input:hover{
+  cursor: pointer;
+  background-color: lightblue;
+}
+
+input{
+  border-radius: 10px;
+}
+
+div{
+  border-radius: 10px;
+}
+
+.settingsButton{
+  background-color: var(--appColor);
+}
+
+html, body{
+  font-family: inter;
+}
+
+html{
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0px;
+  padding: 0px;
+  background-color: var(--appColor);
+}
+
+.firstDiv{
+  background-color: var(--appColor);
+}
+
+.TopBar{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 25px;
+  margin-left: 25px;
+}
+
+.line{
+  display: block;
+  margin-top: 5px;
+  margin-bottom:10px;
+}
+
+input{
+  border: none;
+  height: 35px;
+  width: 58vw;
+}
+
+#searchWrapper{
+  background-color: var(--appColor);
+  border-radius: 0px;
+  height: 55px;
+  width: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchBarWrapper{
+  height: 45px;
+  width: 60vw;
+  border-radius: 10px;
+  background-color: white;
+  justify-content: center;
+  display: flex;
+}
+
+#searchBar{
+  display: flex;
+  align-self: center;
+  height: 40px;
+}
+
+.logOut{
+  height: 30px;
+  width: 90px;
+}
+
+.notifBell{
+  background-color: var(--appColor);
+  padding: -15px;
+}
+
+.userIcon{
+  background-color: var(--appColor);
+  padding: none;
+  outline: none;
+}
+
+line{
+  height: 100px;
+  color: black;
+  border: 5px;
+}
+
+.leftContainer{
+  position: relative;
+  margin-top: 5px;
+  margin-left: 20px;
+  height: 80vh;
+  width: 300px;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+#dashList{
+  list-style: none;
+
+}
+
+.dashButtons{
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  gap: 15px;
+  height: 45px;
+  width: 200px;
+}
+
+#dashboardButton{
+  margin-top: 30px;
+}
+
+.imgWrapper{
+  height: 47px;
+  width: 47px;
+  overflow: hidden;
+}
+
+.dashText{
+  align-self: flex-end;
+}
+
+#lowerSettings{
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  margin-top: 365px; 
+  margin-left: 30px;
+  gap: 10px;
+}
+
+#settingsText{
+  align-self: flex-end;
+}
+
+#liveTrafficText{
+  position: absolute;
+  top: 125px;
+  left: 395px;
+}
+
+#metricsText{
+  position: absolute;
+  top: 125px;
+  left: 395px;
+}
+
+#quickTrafficInfo{
+  height: 250px;
+  width: 315px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#metricsSection{
+  width: 315px;
+  position: absolute;
+  top: 165px;
+  left: 335px;
+}
+
+.metricsTabs{
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.metricsTab{
+  flex: 1;
+  padding: 6px 15px;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 10px 10px 0 0;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.metricsTab:hover{
+  background-color: lightblue;
+  border-color: #aaa;
+}
+
+.metricsTab.active{
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.metricsContent{
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#summaryInfo{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 5px;
+}
+
+.summaryBox{
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.quickTrafficBox{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 300px;
+  background-color: white;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+#alertsText{
+  position: absolute;
+  top: 620px;
+  left: 345px;
+}
+
+#alertTableWrapper{
+  position: absolute;
+  top: 650px;
+  left: 345px;
+  width: 1075px;
+  max-height: 125px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+}
+
+#alertTable{
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+#alertTable thead{
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+#logsText{
+  position: absolute;
+  top: 800px;
+  left: 345px;
+}
+
+#logsTableWrapper{
+  position: absolute;
+  top: 830px;
+  left: 345px;
+  width: 1075px;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+}
+
+#logsTable{
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+#logsTable thead{
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+tr{
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+#currentModelInfo{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  height: 35px;
+  width: 750px;
+  position: absolute;
+  top: 125px;
+  left: 700px;
+}
+
+#modelSelector{
+  height: 25px;
+  align-self: top;
+}
+
+#liveTrafficGraph{
+  position: absolute;
+  left: 650px;
+  top: 175px;
+}
+
+#interface{
+  position: absolute;
+  top: 540px;
+  left: 345px;
+  width: 300px;
+}
+
+#interfaceInput{
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#controlButtons{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 575px;
+  left: 345px;
+}
+
+.control-button {
+  height: 30px;
+  padding: 5px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

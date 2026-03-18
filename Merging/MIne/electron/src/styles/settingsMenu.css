@@ -1,0 +1,127 @@
+.settings-container {
+  position: absolute;
+  left: 350px;
+  top: 120px;
+  padding: 2rem;
+  height: 100vh;
+  width: 75vw;
+  overflow-y: auto;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+.settings-header {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+/* --- Section Cards --- */
+.settings-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+  overflow: hidden; /* Keeps header inside corners */
+}
+
+.section-header {
+  background-color: #dbe0e6; /* The gray bar title */
+  padding: 1rem 1.5rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.section-body {
+  padding: 1.5rem;
+}
+
+/* --- Form Elements --- */
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-label {
+  width: 200px; /* Fixed width for labels to align inputs */
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.form-control {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Browse Group (Input + Button) */
+.input-group {
+  display: flex;
+  flex: 1;
+  gap: 10px;
+}
+
+.btn-browse {
+  background-color: #e0e0e0;
+  border: 1px solid #999;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-browse:hover {
+  background-color: #d0d0d0;
+}
+
+.btn-danger {
+  background-color: #ff8a8a;
+  color: black;
+  border: 1px solid #d32f2f;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* --- Radio Buttons --- */
+.radio-group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* --- Footer Buttons --- */
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.btn-footer {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #333;
+  background: #e0e0e0;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.btn-footer:hover {
+  background: #ccc;
+}
