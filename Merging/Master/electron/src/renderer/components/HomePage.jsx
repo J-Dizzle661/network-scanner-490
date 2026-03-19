@@ -56,82 +56,85 @@ const SearchBar = () => {
 // 1. Add 'onViewChange' to the props here
 // inside src/components/HomePage.jsx
 
-export const LeftContainer = ({ onViewChange }) => {
-    return (
-        <div className="leftContainer">
-            <ul id="dashList">
-                {/* 1. Dashboard Button */}
-                <li>
-                    <button 
-                        id="dashboardButton" 
-                        className="dashButtons"
-                        onClick={() => onViewChange('dashboard')}
-                    >
-                        <div className="imgWrapper">
-                            <img src={dashboardIcon} alt="dashboard icon" className="smallDashSVG"/>
-                        </div>
-                        <h5 className="dashText">Dashboard</h5>
-                    </button>
-                </li>
+// export const LeftContainer = ({ onViewChange }) => {
+//     return (
+//         <div className="leftContainer">
+//             <ul id="dashList">
+//                 {/* 1. Dashboard Button */}
+//                 <li>
+//                     <button 
+//                         id="dashboardButton" 
+//                         className="dashButtons"
+//                         onClick={() => onViewChange('dashboard')}
+//                     >
+//                         <div className="imgWrapper">
+//                             <img src={dashboardIcon} alt="dashboard icon" className="smallDashSVG"/>
+//                         </div>
+//                         <h5 className="dashText">Dashboard</h5>
+//                     </button>
+//                 </li>
 
-                {/* 2. Live Traffic Button (Points to dashboard for now) */}
-                <li>
-                    <button 
-                        id="liveTrafficButton" 
-                        className="dashButtons"
-                        onClick={() => onViewChange('dashboard')}
-                    >
-                        <div className="imgWrapper">
-                            <img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/>
-                        </div>
-                        <h5 className="dashText">Live Traffic</h5>
-                    </button>
-                </li>
+//                 {/* 2. Live Traffic Button (Points to dashboard for now) */}
+//                 <li>
+//                     <button 
+//                         id="liveTrafficButton" 
+//                         className="dashButtons"
+//                         onClick={() => onViewChange('dashboard')}
+//                     >
+//                         <div className="imgWrapper">
+//                             <img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/>
+//                         </div>
+//                         <h5 className="dashText">Live Traffic</h5>
+//                     </button>
+//                 </li>
 
-                {/* 3. Log History Button */}
-                <li>
-                    <button 
-                        id="logHistoryButton" 
-                        className="dashButtons"
-                        onClick={() => onViewChange('dashboard')}
-                    >
-                        <div className="imgWrapper">
-                            <img src={logHistoryIcon} alt="log history icon" className="dashSVG"/>
-                        </div>
-                        <h5 className="dashText">Log History</h5>
-                    </button>
-                </li>
+//                 {/* 3. Log History Button */}
+//                 <li>
+//                     <button 
+//                         id="logHistoryButton" 
+//                         className="dashButtons"
+//                         onClick={() => onViewChange('dashboard')}
+//                     >
+//                         <div className="imgWrapper">
+//                             <img src={logHistoryIcon} alt="log history icon" className="dashSVG"/>
+//                         </div>
+//                         <h5 className="dashText">Log History</h5>
+//                     </button>
+//                 </li>
 
-                {/* 4. Models Button */}
-                <li>
-                    <button 
-                        id="modelButton" 
-                        className="dashButtons"
-                        onClick={() => onViewChange('dashboard')}
-                    >
-                        <div className="imgWrapper">
-                            <img src={modelIcon} alt="model icon" className="smallDashSVG"/>
-                        </div>
-                        <h5 className="dashText">Models</h5>
-                    </button>
-                </li>
-            </ul>
+//                 {/* 4. Models Button */}
+//                 <li>
+//                     <button 
+//                         id="modelButton" 
+//                         className="dashButtons"
+//                         onClick={() => onViewChange('dashboard')}
+//                     >
+//                         <div className="imgWrapper">
+//                             <img src={modelIcon} alt="model icon" className="smallDashSVG"/>
+//                         </div>
+//                         <h5 className="dashText">Models</h5>
+//                     </button>
+//                 </li>
+//             </ul>
 
-            {/* 5. Settings Button (Switches to Settings View) */}
-            <button 
-                id="lowerSettings" 
-                onClick={() => onViewChange('settings')}
-            >
-                <img src={settingsCog} alt="settings cog" />
-                <h5 id="settingsText">Settings</h5>
-            </button>
+//             {/* 5. Settings Button (Switches to Settings View) */}
+//             <button 
+//                 id="lowerSettings" 
+//                 onClick={() => onViewChange('settings')}
+//             >
+//                 <img src={settingsCog} alt="settings cog" />
+//                 <h5 id="settingsText">Settings</h5>
+//             </button>
 
-        </div>
-    );
-}
+//         </div>
+//     );
+// }
 
+//Im already handling this better
+
+/*
     export const MetricsSection = ({ metrics = {}, summary = null }) => {
-        const [activeTab, setActiveTab] = React.useState('live');
+        const [activeTab, setActiveTab] = useState('live');
 
         return (
             <div id="metricsSection">
@@ -302,37 +305,38 @@ export const LeftContainer = ({ onViewChange }) => {
             </div>
         );
     }
+        */
 
-    export const CurrentModelInfo = ({ value = 'randomForest', onChange })=> {
-        const modelNames = {
-            randomForest: 'Random Forest',
-            logisticRegression: 'Logistic Regression',
-            supportVectorMachine: 'Support Vector Machine',
-            multilayerPerceptron: 'Multilayer Perceptron',
-            isolationForest: 'Isolation Forest'
-        };
+    // export const CurrentModelInfo = ({ value = 'randomForest', onChange })=> {
+    //     const modelNames = {
+    //         randomForest: 'Random Forest',
+    //         logisticRegression: 'Logistic Regression',
+    //         supportVectorMachine: 'Support Vector Machine',
+    //         multilayerPerceptron: 'Multilayer Perceptron',
+    //         isolationForest: 'Isolation Forest'
+    //     };
 
-        return (
-            <div id = "currentModelInfo">
-                <h5>Current Model: [{modelNames[value] || 'Random Forest'}]</h5>
-                <label id="modelChangeLabel">
-                    <h5>Change Model: </h5>
-                </label>
-                <select 
-                    name="model" 
-                    id="modelSelector"
-                    value={value}
-                    onChange={(e) => onChange && onChange(e.target.value)}
-                >
-                    <option value="randomForest">Random Forest</option>
-                    <option value="logisticRegression">Logistic Regression</option>
-                    <option value="supportVectorMachine">Support Vector Machine</option>
-                    <option value="multilayerPerceptron">Multilayer Perceptron</option>
-                    <option value="isolationForest">Isolation Forest</option>
-                </select>
-            </div>
-        );
-    }
+    //     return (
+    //         <div id = "currentModelInfo">
+    //             <h5>Current Model: [{modelNames[value] || 'Random Forest'}]</h5>
+    //             <label id="modelChangeLabel">
+    //                 <h5>Change Model: </h5>
+    //             </label>
+    //             <select 
+    //                 name="model" 
+    //                 id="modelSelector"
+    //                 value={value}
+    //                 onChange={(e) => onChange && onChange(e.target.value)}
+    //             >
+    //                 <option value="randomForest">Random Forest</option>
+    //                 <option value="logisticRegression">Logistic Regression</option>
+    //                 <option value="supportVectorMachine">Support Vector Machine</option>
+    //                 <option value="multilayerPerceptron">Multilayer Perceptron</option>
+    //                 <option value="isolationForest">Isolation Forest</option>
+    //             </select>
+    //         </div>
+    //     );
+    // } My code is better
 
     export const LiveTrafficGraph = ()=>{
         return(
@@ -342,8 +346,10 @@ export const LeftContainer = ({ onViewChange }) => {
         );
     }
 
+
+    /*
     export const ControlButtons = ({ onStart, onStop, selectedInterface }) => {
-    const [isRunning, setIsRunning] = React.useState(false);
+    const [isRunning, setIsRunning] = useState(false);
 
     const handleStart = () => {
         setIsRunning(true);
@@ -361,12 +367,12 @@ export const LeftContainer = ({ onViewChange }) => {
     return (
         <div id="controlButtons" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '20px' }}>
             
-            {/* New Text Label */}
+            {/* New Text Label *//*}
             <h5 style={{ margin: 0, color: '#555' }}>
                 Start Interface: <span style={{ color: '#000', fontWeight: 'bold' }}>{selectedInterface || "None Selected"}</span>
             </h5>
 
-            {/* Buttons */}
+            {/* Buttons *//*}
             <button 
                 id="startButton" 
                 className={isRunning ? 'control-button disabled' : 'control-button'}
@@ -389,5 +395,6 @@ export const LeftContainer = ({ onViewChange }) => {
         </div>
     );
 }
+*/
 
     

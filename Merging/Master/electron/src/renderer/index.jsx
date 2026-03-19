@@ -5,15 +5,16 @@ import '../styles/global.css';
 
 
 // Import your components
-import { 
-  TopBar, LeftContainer, QuickTrafficInfo, AlertTable, 
-  CurrentModelInfo, ControlButtons, 
-  LiveTrafficGraph, LogsTable 
-} from './components/HomePage.jsx';
+// import { 
+//   TopBar, LeftContainer, QuickTrafficInfo, AlertTable, 
+//   CurrentModelInfo, ControlButtons, 
+//   LiveTrafficGraph, LogsTable 
+// } from './components/HomePage.jsx';
 
-import SettingsPage from './components/SettingsPage.jsx'; // Import the new page
-import { startScan, stopScan, initWebSocket } from './utils/api.js';
-import { socket } from './utils/api.js';
+// not necessary
+// import SettingsPage from './components/SettingsPage.jsx'; // Import the new page
+// import { startScan, stopScan, initWebSocket } from './utils/api.js';
+// import { socket } from './utils/api.js';
 
 // In src/index.jsx
 
