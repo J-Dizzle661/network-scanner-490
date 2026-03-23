@@ -131,3 +131,4 @@ export const LeftContainer = ({TopSettingsOpen, selectedTab, setSelectedTab})=> 
         );
     }
 }
+

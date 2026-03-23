@@ -6,7 +6,7 @@ import fakeTraffic from "./images/fakeTraffic.svg"
 //This function allows us to interact with the fe in real time and modify what is being displayed
 import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket, socket } from '../../utils/api.js';
-import { models, modelsMap, currentActiveModel } from "../../main/preload.js";
+import { models, modelsMap, currentActiveModel } from "../../main/modelObjects.js";
 
 
 let networkStatus = 'IDLE';
@@ -63,6 +63,12 @@ if (status.state === 'stopped') {
     setNetworkMetrics(prev => ({ ...prev, isScanning: false }));
 }
 }
+
+function onScanSummary(summary) {
+    console.log("Scan summary received:", summary);
+    setScanSummary(summary);
+}
+
 
 function onNetworkData(data) {
 console.log("Network data received:", data);
