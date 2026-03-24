@@ -191,7 +191,7 @@ return () => {
       interface: targetInterface, // Send the GUID or null for auto-detection
       captureInterface: appSettings.captureInterface,
       mode: "live",
-      model: selectedModel
+      model: currentActiveModel
     });
   };
   
