@@ -2,6 +2,7 @@
 # Defines logic to capture live network traffic with NFStream.
 # -----------------------------------------------------------------------------
 
+import sys
 from nfstream import NFStreamer
 from src.utils.interface_helper import get_network_interfaces
 
@@ -12,7 +13,9 @@ def capture_live(interface=None):
     Yields flow objects as they are generated.
 
     Args: 
-        interface: Network interface GUID or None for auto-detection
+        interface: Network interface identifier or None for auto-detection.
+                   On Windows: NPF GUID (e.g., '\\Device\\NPF_{...}') or bare '{GUID}'.
+                   On macOS/Linux: interface name (e.g., 'en0').
 
     Yields:
         NFStream flow objects with statistical analysis enabled
@@ -31,25 +34,12 @@ def capture_live(interface=None):
                 "Ensure at least one network adapter is connected and active."
             )
     else:
-        # If interface was provided, ensure it's in the correct format
         print(f"Interface provided from client: '{interface}'")
-        if not interface.startswith('\\Device\\NPF_'):
-            # If it's just a GUID, format it properly
-            if interface.startswith('{'):
-                interface = f"\\Device\\NPF_{interface}"
-                print(f"Formatted GUID to: {interface}")
-            else:
-                # Try to auto-detect if the provided interface doesn't match expected format
-                print(f"Warning: Invalid interface format. Attempting auto-detection...")
-                interfaces = get_network_interfaces()
-                if interfaces:
-                    interface = interfaces[0]['guid']
-                    print(f"Auto-detected: {interfaces[0]['name']} ({interface})")
-                else:
-                    raise ValueError(
-                        f"Invalid interface provided: '{interface}'. "
-                        f"No network interfaces available for auto-detection."
-                    )
+        # On Windows, a bare GUID like '{...}' needs the NPF prefix.
+        # On macOS/Linux, names like 'en0' are passed through as-is.
+        if sys.platform == "win32" and interface.startswith('{'):
+            interface = f"\\Device\\NPF_{interface}"
+            print(f"Formatted Windows GUID to: {interface}")
         print(f"Using interface: {interface}")
 
     print(f"Capturing live traffic on '{interface}'... Press Ctrl+C to stop.")
