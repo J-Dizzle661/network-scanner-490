@@ -2,7 +2,7 @@
 // is seen in the Renderer.jsx file. The Components in this use the style.css file as 
 // its stylesheet.
 
-import fakeTraffic from "./images/fakeTraffic.svg"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 //This function allows us to interact with the fe in real time and modify what is being displayed
 import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket, socket } from '../../utils/api.js';
@@ -35,6 +35,8 @@ const [networkMetrics, setNetworkMetrics] = useState({
     isScanning: false
 });
 const [scanSummary, setScanSummary] = useState(null);
+const [trafficHistory, setTrafficHistory] = useState([]);
+const [selectedMetric, setSelectedMetric] = useState('inferenceLatency');
 
 const [appSettings, setAppSettings] = useState({
     captureInterface: 'Loading...',
@@ -43,6 +45,7 @@ const [appSettings, setAppSettings] = useState({
 
 const MAX_LOG_ENTRIES = 50;
 const MAX_ALERT_ENTRIES = 50;
+const MAX_GRAPH_POINTS = 30;
 
 // Socket event handler functions; passed in initWebSocket() to
 // register callbacks for incoming events from the backend server.
@@ -83,6 +86,17 @@ setNetworkMetrics({
     memoryUsage: data.memory_usage_percent || 0,
     isScanning: true
 });
+
+// Append a data point to the sliding window for the live graph
+const newGraphPoint = {
+    time: new Date().toLocaleTimeString(),
+    inferenceLatency: data.inference_latency ? parseFloat((data.inference_latency * 1000).toFixed(3)) : 0,
+    throughput: data.throughput ? parseFloat(data.throughput.toFixed(2)) : 0,
+    cpuUsage: data.cpu_usage_percent || 0,
+    memoryUsage: data.memory_usage_percent || 0,
+    flowNumber: data.flow_number || 0,
+};
+setTrafficHistory(prev => [...prev, newGraphPoint].slice(-MAX_GRAPH_POINTS));
 
 // Create a new log entry with timestamp and formatted data
 const newLogEntry = {
@@ -172,10 +186,11 @@ return () => {
   const handleStartScan = () => {
     console.log("Start button clicked");
 
-    // Clear logs, alerts, and summary when starting a new scan
+    // Clear logs, alerts, summary, and graph history when starting a new scan
     setLogs([]);
     setAlerts([]);
     setScanSummary(null);
+    setTrafficHistory([]);
 
     // Always send the GUID (which is the properly formatted interface for NFStreamer)
     // If guid is empty or invalid, send nothing and let backend auto-detect
@@ -202,11 +217,11 @@ return () => {
 
     return (
         <div id="homePage">
-            <h1 id="liveTrafficText">Live Traffic</h1>
-            <QuickTrafficInfo/>
+            <h5 id="metricsText">Metrics</h5>
+            <MetricsSection metrics={networkMetrics} summary={scanSummary} />
             <h5 id="alertsText">Alerts</h5>
-            <AlertTable logs = {logs} />
-            <LogsTable/>
+            <AlertTable alerts={alerts} />
+            <LogsTable logs={logs} />
             <CurrentModelInfo />
             <ControlButtons 
             onStart={handleStartScan} 
@@ -214,7 +229,7 @@ return () => {
             selectedInterface={appSettings.captureInterface}
             selectedModel={currentActiveModel}
             />
-            <LiveTrafficGraph />
+            <LiveTrafficGraph history={trafficHistory} selectedMetric={selectedMetric} onMetricChange={setSelectedMetric} />
         </div>
     );
 }
@@ -458,10 +473,73 @@ export const LogsTable = ({ logs = [] }) => {
         );
     }
 
-    export const LiveTrafficGraph = ()=>{
-        return(
+    export const LiveTrafficGraph = ({ history = [], selectedMetric = 'inferenceLatency', onMetricChange }) => {
+        const metricOptions = [
+            { value: 'inferenceLatency', label: 'Inference Latency (ms)' },
+            { value: 'throughput',       label: 'Throughput (pkts/s)'    },
+            { value: 'cpuUsage',         label: 'CPU Usage (%)'          },
+            { value: 'memoryUsage',      label: 'Memory Usage (%)'       },
+        ];
+
+        const selectedLabel = metricOptions.find(m => m.value === selectedMetric)?.label || selectedMetric;
+
+        return (
             <div id="liveTrafficGraph">
-                <img src={fakeTraffic} alt="fake internet traffic" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                    <h5 style={{ margin: 0 }}>Live Traffic</h5>
+                    <select
+                        value={selectedMetric}
+                        onChange={e => onMetricChange && onMetricChange(e.target.value)}
+                        style={{ padding: '4px 8px', borderRadius: '5px', border: '1px solid #ccc', fontSize: '13px' }}
+                    >
+                        {metricOptions.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                    </select>
+                </div>
+
+                {history.length === 0 ? (
+                    <div style={{
+                        width: 660, height: 300,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: 'white', borderRadius: '10px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        color: '#888', fontSize: '14px'
+                    }}>
+                        Start a scan to see live traffic data
+                    </div>
+                ) : (
+                    <div style={{
+                        width: 660, height: 300,
+                        background: 'white', borderRadius: '10px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        padding: '10px'
+                    }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={history} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                <XAxis
+                                    dataKey="time"
+                                    tick={{ fontSize: 10 }}
+                                    interval="preserveStartEnd"
+                                />
+                                <YAxis tick={{ fontSize: 10 }} width={45} />
+                                <Tooltip
+                                    formatter={(value) => [`${value}`, selectedLabel]}
+                                    labelFormatter={(label) => `Time: ${label}`}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey={selectedMetric}
+                                    stroke="#007bff"
+                                    strokeWidth={2}
+                                    dot={false}
+                                    isAnimationActive={false}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
             </div>
         );
     }
