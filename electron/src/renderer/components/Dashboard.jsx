@@ -208,7 +208,6 @@ return () => {
             <AlertTable logs = {logs} />
             <LogsTable/>
             <CurrentModelInfo />
-            <Interface value={interfaceValue} onChange={setInterfaceValue} />
             <ControlButtons 
             onStart={handleStartScan} 
             onStop={handleStopScan} 
@@ -515,16 +514,17 @@ export const LogsTable = ({ logs = [] }) => {
         );
     }
 
-    export const Interface = ({ value, onChange })=> {
-        return (
-            <div id = "interface">
-                <input 
-                    type="text" 
-                    id="interfaceInput"
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder="Enter interface"
-                />
-            </div>
-        );
-    }
+    // export const Interface = ({ value, onChange })=> {
+    //     return (
+    //         <div id = "interface">
+    //             <input 
+    //                 type="text" 
+    //                 id="interfaceInput"
+    //                 value={value}
+    //                 onChange={(e) => onChange(e.target.value)}
+    //                 placeholder="Enter interface"
+    //             />
+    //         </div>
+    //     );
+    // }
+    // The old interface textbox, will probably be deleted after initial merge to master

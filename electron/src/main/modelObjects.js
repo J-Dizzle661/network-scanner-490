@@ -1,5 +1,5 @@
 //simple array of the models available, can be changed whenever 
-export const models = ['Random Forest', 'Isolation Forest', 'SVM', 'MLP','Logistic Regression'];
+export const models = ['Random Forest', 'Isolation Forest', 'Support Vector Machine', 'Multilayer Perceptron','Logistic Regression'];
 
 //ML models will be treated as objects to track their attributes
 function MLModel(name){

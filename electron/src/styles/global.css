@@ -185,7 +185,7 @@ line{
 
 #liveTrafficText{
   position: absolute;
-  top: 125px;
+  top: 150px;
   left: 395px;
 }
 
@@ -196,6 +196,9 @@ line{
 }
 
 #quickTrafficInfo{
+  position: absolute;
+  top: 210px;
+  left: 330px;
   height: 250px;
   width: 315px;
   display: flex;
@@ -273,13 +276,13 @@ line{
 
 #alertsText{
   position: absolute;
-  top: 620px;
+  top: 600px;
   left: 345px;
 }
 
 #alertTableWrapper{
   position: absolute;
-  top: 650px;
+  top: 630px;
   left: 345px;
   width: 1075px;
   max-height: 125px;
@@ -304,13 +307,13 @@ line{
 
 #logsText{
   position: absolute;
-  top: 800px;
+  top: 780px;
   left: 345px;
 }
 
 #logsTableWrapper{
   position: absolute;
-  top: 830px;
+  top: 820px;
   left: 345px;
   width: 1075px;
   max-height: 250px;
@@ -380,7 +383,7 @@ tr{
   align-items: center;
   gap: 10px;
   position: absolute;
-  top: 575px;
+  top: 530px;
   left: 345px;
 }
 

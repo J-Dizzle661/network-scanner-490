@@ -117,15 +117,15 @@ def _scan_loop(params, emit):
     model_type = params.get("model", "randomForest")  # default to randomForest if not specified
     try:
         match model_type:
-            case "randomForest":
+            case "Random Forest":
                 model = ModelInference(RF_MODEL_PATH, ENCODER_PATH)
-            case "logisticRegression":
+            case "Logistic Regression":
                 model = ModelInference(LR_MODEL_PATH, ENCODER_PATH)
-            case "supportVectorMachine":
+            case "Support Vector Machine":
                 model = ModelInference(SVM_MODEL_PATH, ENCODER_PATH)
-            case "multilayerPerceptron":
+            case "Multilayer Perceptron":
                 model = ModelInference(MLP_MODEL_PATH, ENCODER_PATH)
-            case "isolationForest":
+            case "Isolation Forest":
                 model = ModelInference(IF_MODEL_PATH, ENCODER_PATH)
             case _:
                 print(f"Unknown model '{model_type}' selected; defaulting to Random Forest.")
