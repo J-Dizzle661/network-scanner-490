@@ -205,8 +205,8 @@ return () => {
             <h1 id="liveTrafficText">Live Traffic</h1>
             <QuickTrafficInfo/>
             <h5 id="alertsText">Alerts</h5>
-            <AlertTable logs = {logs} />
-            <LogsTable/>
+            <AlertTable alerts={alerts} />
+            <LogsTable logs={logs} />
             <CurrentModelInfo />
             <ControlButtons 
             onStart={handleStartScan} 
