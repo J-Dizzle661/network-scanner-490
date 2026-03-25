@@ -1,7 +1,10 @@
 .settings-container {
+  position: absolute;
+  left: 350px;
+  top: 120px;
   padding: 2rem;
-  background-color: #f4f7fa; /* Light blue-ish gray background */
   height: 100vh;
+  width: 75vw;
   overflow-y: auto;
   font-family: 'Segoe UI', sans-serif;
   color: #333;

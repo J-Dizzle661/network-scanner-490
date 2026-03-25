@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import './SettingsPage.css';
+import { useState, useEffect } from 'react';
 
 // Try going up two levels to find utils.
 // If this still fails, check where your "utils" folder actually is.
 import { socket } from "../utils/api.js"; 
 
-const SettingsPage = () => {
+export const SettingsMenu = () => {
   const [formData, setFormData] = useState({
     captureInterface: '',
     guid: '', 
@@ -69,6 +68,7 @@ const SettingsPage = () => {
   };
 
   return (
+  
     <div className="settings-container">
       <h1 className="settings-header">Application Settings</h1>
 
@@ -115,4 +115,3 @@ const SettingsPage = () => {
   );
 };
 
-export default SettingsPage;
