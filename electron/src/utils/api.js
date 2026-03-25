@@ -1,11 +1,8 @@
 import { io } from 'socket.io-client';
 
-// 1. Create and Export the socket immediately
+// Renderer-local socket client to avoid importing from outside the renderer root
 export const socket = io("http://127.0.0.1:5000");
 
-// SERVER --> CLIENT
-// Function to initialize websocket client and listens for socket events
-// emitted from the server.
 export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData, onScanSummary) {
     if (!socket) return;
 
@@ -29,35 +26,30 @@ export function initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkD
         onScanStatus(status);
     });
 
-  socket.on("network_data", (data) => {
-    onNetworkData(data);
-  });
+    socket.on("network_data", (data) => {
+        onNetworkData(data);
+    });
 
-  socket.on("scan_summary", (summary) => {
+    socket.on("scan_summary", (summary) => {
     if (onScanSummary) {
-      onScanSummary(summary);
+        onScanSummary(summary);
     }
-  });
+    });
 
-  // Return cleanup function
-  return () => {
-      socket.off("alert");
-      socket.off("service_status");
-      socket.off("scan_status");
-      socket.off("network_data");
-      socket.off("scan_summary");
-  };
+// Add cleanup return
+return () => {
+    socket.off("alert");
+    socket.off("service_status");
+    socket.off("scan_status");
+    socket.off("network_data");
+    socket.off("scan_summary");
+    };
 }
 
-// CLIENT --> SERVER
 export function startScan(payload) {
-    if (socket) {
-        socket.emit("start_scan", payload);
-    }
+    if (socket) socket.emit("start_scan", payload);
 }
 
 export function stopScan() {
-    if (socket) {
-        socket.emit("stop_scan");
-    }
+    if (socket) socket.emit("stop_scan");
 }

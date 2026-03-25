@@ -11,6 +11,7 @@ STEPS FOR VENV CREATION
 1. Navigate to python backend root ids-app/backend/ and create the venv with the following
 command:
 python3.11 -m venv venv
+windows: py -3.11 -m venv venv
 
 If python 3.11 is not installed (verify with python3.11 --version) download from python website
 then run command.
@@ -45,6 +46,7 @@ source venv/bin/activate
 
 2. Execute the python project with:
 python app.py
+windows: py app.py
 
 The backend should now be running, and corresponding output should display in the terminal (The
 websocket server should be initialized and websocket events should be open for the electron client
