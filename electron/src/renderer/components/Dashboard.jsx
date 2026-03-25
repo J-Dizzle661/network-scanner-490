@@ -217,8 +217,8 @@ return () => {
 
     return (
         <div id="homePage">
-            <h1 id="liveTrafficText">Live Traffic</h1>
-            <QuickTrafficInfo/>
+            <h5 id="metricsText">Metrics</h5>
+            <MetricsSection metrics={networkMetrics} summary={scanSummary} />
             <h5 id="alertsText">Alerts</h5>
             <AlertTable alerts={alerts} />
             <LogsTable logs={logs} />
