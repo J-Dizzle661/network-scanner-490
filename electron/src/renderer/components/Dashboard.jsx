@@ -8,13 +8,12 @@ import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket, socket } from '../../utils/api.js';
 import { models, modelsMap, currentActiveModel } from "../../main/modelObjects.js";
 
-
 let networkStatus = 'IDLE';
 let detectedThreats = '0';
 let currentThroughput = '0';
 const defaultModel = 'Random Forest';
 //List of models for the dropdown menu. Can be easily modified to add more models.
-const modelsJSX = models.map((model) => <option key={model}>{model}</option>);
+const modelsJSX = models.map((model) => <option key={Object.keys(model)[0]}>{Object.keys(model)[0]}</option>);
 
 //Main component that holds all other components for the HomePage
 //This gets exported directly to app.jsx

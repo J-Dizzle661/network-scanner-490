@@ -25,10 +25,13 @@ const Tiles = ({setSelectedTab})=>{
                     </b>
                     <div>
                         <ul className="modelStats" >
-                            <li>Accuracy: {model.accuracy}</li>
-                            <li>Inference Time: {model.inferTime}</li>
-                            <li>F1 Score: {model.f1score}</li>
-                            <li>Total Flows: {model.totFlows}</li>
+                            <li>Accuracy: {model.accuracy}%</li>
+                            <li>Precision: {model.precision}%</li>
+                            <li>Recall: {model.recall}%</li>
+                            <li>F1 Score: {model.f1score}%</li>
+                            <li>Inference Time: {model.inferTime}s</li>
+                            <li>CPU Usage: {model.cpu}</li>
+                            <li>Memory Usage: {model.mem}</li>
                         </ul>
                         <button className="activateModelButton" style = {{backgroundColor: model.state === 'Active' ? 'lightgrey' : 'lightblue'}} onClick={() => {
                                 if (model.state ==='Inactive'){
