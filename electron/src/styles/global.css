@@ -183,22 +183,75 @@ line{
   align-self: flex-end;
 }
 
-#liveTrafficText{
-  position: absolute;
-  top: 125px;
-  left: 395px;
-}
-
-#quickTrafficInfo{
-  height: 320px;
-  width: 315px;
+#metricsText{
   position: absolute;
   top: 185px;
   left: 335px;
+  width: 315px;
+  text-align: center;
+  margin: 0;
+}
+
+#quickTrafficInfo{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+}
+
+#metricsSection{
+  width: 315px;
+  position: absolute;
+  top: 215px;
+  left: 335px;
+}
+
+.metricsTabs{
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.metricsTab{
+  flex: 1;
+  padding: 6px 15px;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 10px 10px 0 0;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.metricsTab:hover{
+  background-color: lightblue;
+  border-color: #aaa;
+}
+
+.metricsTab.active{
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.metricsContent{
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#summaryInfo{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 5px;
+}
+
+.summaryBox{
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .quickTrafficBox{
@@ -206,42 +259,73 @@ line{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 85px;
+  height: 40px;
   width: 300px;
   background-color: white;
   overflow: hidden;
+  font-size: 14px;
 }
 
 #alertsText{
   position: absolute;
-  top: 620px;
+  top: 600px;
   left: 345px;
 }
 
-#alertTable{
-  border-radius: 10px;
-  width: 1075px;
+#alertTableWrapper{
   position: absolute;
-  top: 650px;
+  top: 630px;
   left: 345px;
+  width: 1075px;
+  max-height: 125px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+}
+
+#alertTable{
+  width: 100%;
   border-collapse: collapse;
   background-color: white;
+}
+
+#alertTable thead{
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
 }
 
 #logsText{
   position: absolute;
-  top: 720px;
+  top: 780px;
   left: 345px;
 }
 
-#logsTable{
-  border-radius: 10px;
-  width: 1075px;
+#logsTableWrapper{
   position: absolute;
-  top: 750px;
+  top: 820px;
   left: 345px;
+  width: 1075px;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+}
+
+#logsTable{
+  width: 100%;
   border-collapse: collapse;
   background-color: white;
+}
+
+#logsTable thead{
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
 }
 
 tr{
@@ -291,7 +375,7 @@ tr{
   align-items: center;
   gap: 10px;
   position: absolute;
-  top: 575px;
+  top: 530px;
   left: 345px;
 }
 
@@ -304,12 +388,12 @@ tr{
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .control-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
-
-
-

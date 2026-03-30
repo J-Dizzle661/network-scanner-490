@@ -7,6 +7,49 @@ if (started) {
   app.quit();
 }
 
+const { ipcMain, dialog } = require('electron');
+const fs = require('fs');
+
+// --- IPC HANDLERS ---
+
+// 1. Handle "Browse" button click
+ipcMain.handle('dialog:openDirectory', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+  if (canceled) {
+    return null;
+  } else {
+    return filePaths[0];
+  }
+});
+
+// 2. Handle "Save Settings"
+ipcMain.handle('settings:save', async (event, settings) => {
+  const configPath = path.join(app.getPath('userData'), 'user-settings.json');
+  try {
+    fs.writeFileSync(configPath, JSON.stringify(settings, null, 2));
+    return { success: true, path: configPath };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// 3. Handle "Load Settings" (Optional, but good for startup)
+ipcMain.handle('settings:load', async () => {
+  const configPath = path.join(app.getPath('userData'), 'user-settings.json');
+  try {
+    if (fs.existsSync(configPath)) {
+      const data = fs.readFileSync(configPath, 'utf-8');
+      return JSON.parse(data);
+    }
+    return null; // Return null if no file exists yet
+  } catch (error) {
+    console.error("Failed to load settings", error);
+    return null;
+  }
+});
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({

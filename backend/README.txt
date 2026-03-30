@@ -46,6 +46,7 @@ source venv/bin/activate
 
 2. Execute the python project with:
 python app.py
+windows: py app.py
 
 The backend should now be running, and corresponding output should display in the terminal (The
 websocket server should be initialized and websocket events should be open for the electron client

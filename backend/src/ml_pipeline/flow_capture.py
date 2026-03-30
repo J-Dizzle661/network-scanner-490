@@ -2,19 +2,45 @@
 # Defines logic to capture live network traffic with NFStream.
 # -----------------------------------------------------------------------------
 
+import sys
 from nfstream import NFStreamer
+from src.utils.interface_helper import get_network_interfaces
 
-WINDOWS_DEFAULT_INTERFACE = r"\Device\NPF{45893BC7-7ABC-4309-A8DA-A2003ED2CC11}"
-
-
-def capture_live(interface="eth0"):
-
-    if interface == "eth0":
-        interface = WINDOWS_DEFAULT_INTERFACE
+def capture_live(interface=None):
     """
     Captures live network traffic on the specified interface using NFStreamer.
+    If no interface is provided, auto-detects the first available one.
     Yields flow objects as they are generated.
+
+    Args: 
+        interface: Network interface identifier or None for auto-detection.
+                   On Windows: NPF GUID (e.g., '\\Device\\NPF_{...}') or bare '{GUID}'.
+                   On macOS/Linux: interface name (e.g., 'en0').
+
+    Yields:
+        NFStream flow objects with statistical analysis enabled
     """
+    
+    # Auto-detect if not provided or empty
+    if not interface:
+        interfaces = get_network_interfaces()
+        print(f"Auto-detecting interface. Found {len(interfaces)} interface(s)")
+        if interfaces:
+            interface = interfaces[0]['guid']
+            print(f"Auto-detected: {interfaces[0]['name']} ({interface})")
+        else:
+            raise ValueError(
+                "No valid network interfaces detected. "
+                "Ensure at least one network adapter is connected and active."
+            )
+    else:
+        print(f"Interface provided from client: '{interface}'")
+        # On Windows, a bare GUID like '{...}' needs the NPF prefix.
+        # On macOS/Linux, names like 'en0' are passed through as-is.
+        if sys.platform == "win32" and interface.startswith('{'):
+            interface = f"\\Device\\NPF_{interface}"
+            print(f"Formatted Windows GUID to: {interface}")
+        print(f"Using interface: {interface}")
 
     print(f"Capturing live traffic on '{interface}'... Press Ctrl+C to stop.")
     

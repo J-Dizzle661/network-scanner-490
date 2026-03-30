@@ -24,3 +24,25 @@ class ModelInference:
         preds = self.model.predict(X)
         labels = self.encoder.inverse_transform(preds)
         return labels
+    
+    def predict_with_confidence(self, X):
+        """
+        Accepts a DataFrame and returns predicted labels with confidence scores.
+        Args:
+            X: DataFrame containing preprocessed features.
+        Returns:
+            A tuple of (labels, confidences) where confidences are probabilities.
+        """
+        preds = self.model.predict(X)
+        labels = self.encoder.inverse_transform(preds)
+        
+        try:
+            # Try to get prediction probabilities (works for most classifiers)
+            probabilities = self.model.predict_proba(X)
+            # Confidence is the max probability for each prediction
+            confidences = np.max(probabilities, axis=1)
+        except AttributeError:
+            # Model doesn't support predict_proba
+            confidences = np.array([None] * len(preds))
+        
+        return labels, confidences
