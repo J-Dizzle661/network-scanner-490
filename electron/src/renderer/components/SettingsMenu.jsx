@@ -60,6 +60,18 @@ export const SettingsMenu = () => {
     }
   };
 
+  const handleBrowse = async () => {
+    if (window.electronAPI) {
+      const selectedFolder = await window.electronAPI.selectFolder();
+      if (selectedFolder) {
+        setFormData(prev => ({
+          ...prev,
+          logPath: selectedFolder
+        }));
+      }
+    }
+  };
+
   const handleSave = async () => {
     if (window.electronAPI) {
       const result = await window.electronAPI.saveSettings(formData);
@@ -103,6 +115,26 @@ export const SettingsMenu = () => {
               readOnly 
               style={{ backgroundColor: '#e9ecef', color: '#666' }}
             />
+          </div>
+
+        </div>
+      </div>
+
+      <div className="settings-section">
+        <div className="section-header">Data Management</div>
+        <div className="section-body">
+          
+          <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <label className="form-label" style={{ marginBottom: 0, fontWeight: 'bold' }}>Local Log Storage Path:</label>
+            <input 
+              type="text" 
+              className="form-control" 
+              name="logPath"
+              value={formData.logPath} 
+              readOnly 
+              style={{ flex: 1, backgroundColor: '#e9ecef', color: '#666', marginBottom: 0 }}
+            />
+            <button className="btn-footer" style={{ margin: 0, padding: '5px 15px' }} onClick={handleBrowse}>Browse...</button>
           </div>
 
         </div>
