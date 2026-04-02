@@ -28,7 +28,7 @@ const Tiles = ({setSelectedTab})=>{
                             <li>Accuracy: {model.accuracy}%</li>
                             <li>Precision: {model.precision}%</li>
                             <li>Recall: {model.recall}%</li>
-                            <li>F1 Score: {model.f1score}%</li>
+                            <li>F1 Score: {model.f1}%</li>
                             <li>Inference Time: {model.inferTime}s</li>
                             <li>CPU Usage: {model.cpu}</li>
                             <li>Memory Usage: {model.mem}</li>

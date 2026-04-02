@@ -20,7 +20,7 @@ div{
   width: 400px;
   position: relative;
   left: 20px;
-  top: 20px;
+  top: 10px;
 }
 
 .modelTile{
@@ -29,6 +29,8 @@ div{
 }
 
 .modelStats{
+  position: relative;
+  top: 1px;
   list-style: none;
 }
 
