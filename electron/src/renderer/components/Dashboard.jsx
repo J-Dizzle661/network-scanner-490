@@ -472,7 +472,7 @@ export const LogsTable = ({ logs = [] }) => {
         );
     }
 
-    export const LiveTrafficGraph = ({ history = [], selectedMetric = 'inferenceLatency', onMetricChange }) => {
+    export const LiveTrafficGraph = ({ history, selectedMetric , onMetricChange }) => {
         const metricOptions = [
             { value: 'inferenceLatency', label: 'Inference Latency (ms)' },
             { value: 'throughput',       label: 'Throughput (pkts/s)'    },
