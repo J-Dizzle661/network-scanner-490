@@ -25,7 +25,7 @@ export const App = () => {
 //new code
 
 // State variables
-const [interfaceValue, setInterfaceValue] = useState('');
+// const [interfaceValue, setInterfaceValue] = useState('');
 const [logs, setLogs] = useState([]);
 const [alerts, setAlerts] = useState([]);
 
@@ -223,7 +223,7 @@ return () => {
 
     const [selectedTab, setSelectedTab] = useState(<Dashboard 
                                                     trafficHistory={trafficHistory} setTrafficHistory={setTrafficHistory}
-                                                    interfaceValue={interfaceValue} setInterfaceValue={setInterfaceValue}
+                                                    interfaceValue={appSettings.captureInterface}
                                                     logs={logs} setLogs={setLogs}
                                                     alerts={alerts} setAlerts={setAlerts}
                                                     networkMetrics={networkMetrics} setNetworkMetrics={setNetworkMetrics}

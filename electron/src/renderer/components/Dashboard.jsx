@@ -225,7 +225,7 @@ export function Dashboard({trafficHistory, setTrafficHistory, interfaceValue, se
             <ControlButtons 
             onStart={handleStartScan} 
             onStop={handleStopScan} 
-            selectedInterface={appSettings.captureInterface}
+            selectedInterface={interfaceValue} 
             selectedModel={currentActiveModel}
             />
             <div id= "liveTrafficGraph"><LiveTrafficGraph history={trafficHistory} /></div>
@@ -488,6 +488,8 @@ export const LogsTable = ({ logs = [] }) => {
             if (onStop) onStop();
             else stopScan();
         };
+
+        console.log(selectedInterface);
     
         return (
             <div id="controlButtons" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '20px' }}>
