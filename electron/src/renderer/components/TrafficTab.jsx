@@ -5,7 +5,7 @@ import { useState } from "react";
 //need to work on getting the traffic history here
 //also need to work on dividing up the traffic graphs up so that all four appear on traffic tab
 
-    export const LiveTrafficGraph = ({ history = [] }) => {
+    export const LiveTrafficGraph = ({ history = []}) => {
         const [selectedMetric, setSelectedMetric] = useState('inferenceLatency');
         const metricOptions = [
             { value: 'inferenceLatency', label: 'Inference Latency (ms)' },
