@@ -473,7 +473,7 @@ export const LogsTable = ({ logs = [] }) => {
     }
 
 
-    export const ControlButtons = ({ onStart, onStop, selectedInterface }) => {
+    export const ControlButtons = ({ onStart, onStop, selectedInterface = [] }) => {
         const [isRunning, setIsRunning] = useState(false);
     
         const handleStart = () => {

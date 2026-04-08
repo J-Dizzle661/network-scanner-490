@@ -21,6 +21,7 @@ import { useEffect } from "react";
 export const App = () => {
     const [TopSettingsOpen, setTopSettingsOpen] = useState(false);  
     const [trafficHistory, setTrafficHistory] = useState([]);
+    
 
 //new code
 
@@ -45,6 +46,8 @@ const [appSettings, setAppSettings] = useState({
     captureInterface: 'Loading...',
     guid: ''
 });
+
+useEffect(() => {console.log('nonya')});
 
 const MAX_LOG_ENTRIES = 50;
 const MAX_ALERT_ENTRIES = 50;
@@ -144,7 +147,7 @@ useEffect(() => {
 // 1. Initialize WebSocket
 const cleanup = initWebSocket(onAlert, onServiceStatus, onScanStatus, onNetworkData, onScanSummary);
 
-// 2. Load Settings from Electron Backend on Startup
+//2. Load Settings from Electron Backend on Startup
 if (window.electronAPI) {
     window.electronAPI.loadSettings().then((savedSettings) => {
         if (savedSettings && savedSettings.guid) {
@@ -166,22 +169,26 @@ if (socket) {
         console.log("App received interfaces:", data);
         if (data.length > 0) {
             // Auto-set the first interface if not already set
-            setAppSettings(prev => {
-                if (prev.guid){ 
-                    console.log(`prev: ${prev}`);
-                    return prev;} // Keep existing if already set
-                // setAppSettings({captureInterface: data[0].name, guid: data[0].guid});
-                console.log(`current interface: ${data[0].name}  ${data[0].guid}`);
-                return {
-                    captureInterface: data[0].name,
-                    guid: data[0].guid,
-                    // logPath: prev.logPath || '',
-                    // startOnBoot: prev.startOnBoot || 'off'
-                };
-            });
+            // setAppSettings(prev => {
+            //     if (prev.guid){ 
+            //         console.log(`prev: ${prev}`);
+            //         return prev;} // Keep existing if already set
+            //     // setAppSettings({captureInterface: data[0].name, guid: data[0].guid});
+            //     console.log(`current interface: ${data[0].name}  ${data[0].guid}`);
+            //     console.log(`appSettings after update: ${appSettings.captureInterface} ${appSettings.guid}`);
+            //     return {
+            //         captureInterface: data[0].name,
+            //         guid: data[0].guid,
+            //         // logPath: prev.logPath || '',
+            //         // startOnBoot: prev.startOnBoot || 'off'
+            //     };
+            // });
+            setAppSettings({captureInterface: data[0].name, guid: data[0].guid});
+            console.log('This is interface after update:', appSettings.captureInterface); // Set entire interface object (name + guid) for easier access later
         }
     });
 }
+
 
 return () => {
     if (socket) socket.off("interface_list");
@@ -223,21 +230,45 @@ return () => {
   };
 
 
+//console.log(`settings = ${settings}`)
 //new code 
 
-    const [selectedTab, setSelectedTab] = useState(<Dashboard 
-                                                    trafficHistory={trafficHistory} setTrafficHistory={setTrafficHistory}
-                                                    interfaceValue={appSettings.captureInterface}
-                                                    logs={logs} setLogs={setLogs}
-                                                    alerts={alerts} setAlerts={setAlerts}
-                                                    networkMetrics={networkMetrics} setNetworkMetrics={setNetworkMetrics}
-                                                    scanSummary={scanSummary} setScanSummary={setScanSummary}
-                                                    appSettings={appSettings} setAppSettings={setAppSettings}
-                                                    handleStartScan={handleStartScan}
-                                                    handleStopScan={handleStopScan}/>);
+let currentTab;
+const [selectedTab, setSelectedTab] = useState('dashboard');
 
-        return (
-        <>
+switch (selectedTab) {
+    case 'dashboard':
+        currentTab =  <Dashboard 
+        trafficHistory={trafficHistory} setTrafficHistory={setTrafficHistory}
+        interfaceValue={appSettings.captureInterface}
+        logs={logs} setLogs={setLogs}
+        alerts={alerts} setAlerts={setAlerts}
+        networkMetrics={networkMetrics} setNetworkMetrics={setNetworkMetrics}
+        scanSummary={scanSummary} setScanSummary={setScanSummary}
+        appSettings={appSettings.captureInterface}
+        handleStartScan={handleStartScan}
+        handleStopScan={handleStopScan}/>;
+        break
+
+    case 'liveTraffic':
+        currentTab = <LiveTrafficTab history={trafficHistory} setTrafficHistory={setTrafficHistory} />;
+        break;
+
+    case 'logHistory':
+        currentTab = <LogHistoryTab logs={logs} />;
+        break;
+    
+    case 'models':
+        currentTab = <ModelsTab setSelectedTab={setSelectedTab}/>;
+        break;
+    
+    case 'settings':
+        currentTab = <SettingsMenu />;
+        break;
+
+}
+
+    return (<>
                 <div className="anchoredElement">
                     <TopBar TopSettingsOpen={TopSettingsOpen} setTopSettingsOpen = {setTopSettingsOpen}/>
                 </div>
@@ -245,9 +276,9 @@ return () => {
                 TopSettingsOpen={TopSettingsOpen} selectedTab = {selectedTab} setSelectedTab = {setSelectedTab}
                 trafficHistory={trafficHistory} setTrafficHistory={setTrafficHistory}
                 />
-            <div >{selectedTab}</div>
-        </>
-    );
+            <div >{currentTab}</div>
+        </>);
+    
 } 
 
 const SettingsIcon = ({TopSettingsOpen, setTopSettingsOpen}) => {
@@ -296,31 +327,31 @@ export const LeftContainer = ({TopSettingsOpen, selectedTab, setSelectedTab, tra
         <div id="leftContainerOpen">
             <ul id="dashListOpen">
                 <li>
-                    <button id="dashboardButton" className="dashButtonsOpen" onClick={() => setSelectedTab(<Dashboard trafficHistory={trafficHistory} setTrafficHistory={setTrafficHistory} />)}>
+                    <button id="dashboardButton" className="dashButtonsOpen" onClick={() => setSelectedTab('dashboard')}>
                         <div className="imgWrapper"><img src={dashboardIcon} alt="dashoard icon" className="smallDashSVG"/></div>
                         <h5 className="dashText">Dashboard</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="liveTrafficButton" className="dashButtonsOpen" onClick={()=> setSelectedTab(<LiveTrafficTab history={trafficHistory} setTrafficHistory={setTrafficHistory} />)}>
+                    <button id="liveTrafficButton" className="dashButtonsOpen" onClick={()=> setSelectedTab('liveTraffic')}>
                         <div className="imgWrapper"><img src={liveTrafficIcon} alt="live traffic icon" className="dashSVG"/></div>
                         <h5 className="dashText">Live Traffic</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="logHistoryButton" className="dashButtonsOpen" onClick={()=> setSelectedTab(<LogHistoryTab />)}>
+                    <button id="logHistoryButton" className="dashButtonsOpen" onClick={()=> setSelectedTab('logHistory')}>
                         <div className="imgWrapper"><img src={logHistoryIcon} alt="log history icon" className="dashSVG"/></div>
                         <h5 className="dashText">Log History</h5>
                     </button>
                 </li>
                 <li>
-                    <button id="modelButton" className="dashButtonsOpen" onClick={() => setSelectedTab(<ModelsTab setSelectedTab={setSelectedTab}/>)}>
+                    <button id="modelButton" className="dashButtonsOpen" onClick={() => setSelectedTab('models')}>
                         <div className="imgWrapper"><img src={modelIcon} alt="model icon" className="smallDashSVG"/></div>
                         <h5 className="dashText">Models</h5>
                     </button>
                 </li>
             </ul>
-            <button id="lowerSettings" onClick={()=> setSelectedTab(<SettingsMenu/>)}>
+            <button id="lowerSettings" onClick={()=> setSelectedTab('settings')}>
                 <img src={settingsCog} alt="settings cog" />
                 <h5 id="settingsText">Settings</h5>
             </button>
