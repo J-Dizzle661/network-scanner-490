@@ -167,12 +167,16 @@ if (socket) {
         if (data.length > 0) {
             // Auto-set the first interface if not already set
             setAppSettings(prev => {
-                if (prev.guid) return prev; // Keep existing if already set
+                if (prev.guid){ 
+                    console.log(`prev: ${prev}`);
+                    return prev;} // Keep existing if already set
+                // setAppSettings({captureInterface: data[0].name, guid: data[0].guid});
+                console.log(`current interface: ${data[0].name}  ${data[0].guid}`);
                 return {
                     captureInterface: data[0].name,
                     guid: data[0].guid,
-                    logPath: prev.logPath || '',
-                    startOnBoot: prev.startOnBoot || 'off'
+                    // logPath: prev.logPath || '',
+                    // startOnBoot: prev.startOnBoot || 'off'
                 };
             });
         }
