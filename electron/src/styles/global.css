@@ -341,7 +341,7 @@ tr{
   width: 750px;
   position: absolute;
   top: 125px;
-  left: 700px;
+  left: 400px;
 }
 
 #modelSelector{
@@ -396,4 +396,22 @@ tr{
 .control-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+#allGraphs{
+  position: absolute;
+  top: 65px;
+  left: 225px;
+
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  transform: scale(0.8);
+}
+
+.graphText{
+  justify-self: center;
 }
