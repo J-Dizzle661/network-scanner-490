@@ -272,12 +272,12 @@ line{
   left: 345px;
 }
 
-#alertTableWrapper{
+#dashAlertTable{
   position: absolute;
   top: 630px;
   left: 345px;
   width: 1075px;
-  max-height: 125px;
+  max-height: 185px;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: white;
@@ -301,18 +301,6 @@ line{
   position: absolute;
   top: 780px;
   left: 345px;
-}
-
-#logsTableWrapper{
-  position: absolute;
-  top: 820px;
-  left: 345px;
-  width: 1075px;
-  max-height: 250px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: white;
-  border-radius: 10px;
 }
 
 #logsTable{

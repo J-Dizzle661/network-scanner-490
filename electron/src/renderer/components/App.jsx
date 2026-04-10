@@ -239,13 +239,12 @@ const [selectedTab, setSelectedTab] = useState('dashboard');
 switch (selectedTab) {
     case 'dashboard':
         currentTab =  <Dashboard 
-        trafficHistory={trafficHistory} setTrafficHistory={setTrafficHistory}
+        trafficHistory={trafficHistory} 
         interfaceValue={appSettings.captureInterface}
-        logs={logs} setLogs={setLogs}
-        alerts={alerts} setAlerts={setAlerts}
-        networkMetrics={networkMetrics} setNetworkMetrics={setNetworkMetrics}
-        scanSummary={scanSummary} setScanSummary={setScanSummary}
-        appSettings={appSettings.captureInterface}
+        logs={logs} 
+        alerts={alerts} 
+        networkMetrics={networkMetrics} 
+        scanSummary={scanSummary} 
         handleStartScan={handleStartScan}
         handleStopScan={handleStopScan}/>;
         break
@@ -255,7 +254,7 @@ switch (selectedTab) {
         break;
 
     case 'logHistory':
-        currentTab = <LogHistoryTab logs={logs} />;
+        currentTab = <LogHistoryTab alerts ={alerts} logs={logs} />;
         break;
     
     case 'models':

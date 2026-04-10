@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { startScan, stopScan, initWebSocket, socket } from '../../utils/api.js';
 import { models, modelsMap, currentActiveModel } from "../../main/modelObjects.js";
 import { LiveTrafficGraph } from "./TrafficTab.jsx";
+import { AlertTable, LogsTable } from './LogHistTab.jsx';
 
 let networkStatus = 'IDLE';
 let detectedThreats = '0';
@@ -18,7 +19,7 @@ const modelsJSX = models.map((model) => <option key={Object.keys(model)[0]}>{Obj
 
 //Main component that holds all other components for the HomePage
 //This gets exported directly to app.jsx
-export function Dashboard({trafficHistory, setTrafficHistory, interfaceValue, setInterfaceValue, logs, setLogs, alerts, setAlerts, networkMetrics, setNetworkMetrics, scanSummary, setScanSummary, appSettings, setAppSettings, handleStartScan, handleStopScan}) {
+export function Dashboard({trafficHistory, interfaceValue, logs, alerts, networkMetrics, scanSummary,  handleStartScan, handleStopScan}) {
 
 // // State variables
 // const [interfaceValue, setInterfaceValue] = useState('');
@@ -219,8 +220,7 @@ export function Dashboard({trafficHistory, setTrafficHistory, interfaceValue, se
             <h5 id="metricsText">Metrics</h5>
             <MetricsSection metrics={networkMetrics} summary={scanSummary} />
             <h5 id="alertsText">Alerts</h5>
-            <AlertTable alerts={alerts} />
-            <LogsTable logs={logs} />
+            <div id="dashAlertTable"><AlertTable alerts={alerts} /></div>
             <CurrentModelInfo />
             <ControlButtons 
             onStart={handleStartScan} 
@@ -370,87 +370,87 @@ const SummaryInfo = ({ summary = null }) => {
     );
 }
 
-export const AlertTable = ({ alerts = [] }) => {
-    return (
-        <div id="alertTableWrapper">
-            <table id="alertTable">
-                <thead>
-                    <tr id = "firstRow">
-                        <th>Time</th>
-                        <th>Flow #</th>
-                        <th>Predicted Label</th>
-                        <th>Confidence</th>
-                        <th>Inference Latency</th>
-                        <th>Throughput</th>
-                        <th>CPU</th>
-                        <th>Memory</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {alerts.length === 0 ? (
-                        <tr>
-                            <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No alerts detected</td>
-                        </tr>
-                    ) : (
-                        alerts.map((alert) => (
-                            <tr key={alert.flowNumber}>
-                                <td>{alert.timestamp}</td>
-                                <td>{alert.flowNumber}</td>
-                                <td style={{color: '#dc3545', fontWeight: 'bold'}}>{alert.label}</td>
-                                <td>{alert.confidence}</td>
-                                <td>{alert.latency}</td>
-                                <td>{alert.throughput}</td>
-                                <td>{alert.cpu}</td>
-                                <td>{alert.memory}</td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
-        </div>
-    );
-}
+// export const AlertTable = ({ alerts = [] }) => {
+//     return (
+//         <div id="alertTableWrapper">
+//             <table id="alertTable">
+//                 <thead>
+//                     <tr id = "firstRow">
+//                         <th>Time</th>
+//                         <th>Flow #</th>
+//                         <th>Predicted Label</th>
+//                         <th>Confidence</th>
+//                         <th>Inference Latency</th>
+//                         <th>Throughput</th>
+//                         <th>CPU</th>
+//                         <th>Memory</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {alerts.length === 0 ? (
+//                         <tr>
+//                             <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No alerts detected</td>
+//                         </tr>
+//                     ) : (
+//                         alerts.map((alert) => (
+//                             <tr key={alert.flowNumber}>
+//                                 <td>{alert.timestamp}</td>
+//                                 <td>{alert.flowNumber}</td>
+//                                 <td style={{color: '#dc3545', fontWeight: 'bold'}}>{alert.label}</td>
+//                                 <td>{alert.confidence}</td>
+//                                 <td>{alert.latency}</td>
+//                                 <td>{alert.throughput}</td>
+//                                 <td>{alert.cpu}</td>
+//                                 <td>{alert.memory}</td>
+//                             </tr>
+//                         ))
+//                     )}
+//                 </tbody>
+//             </table>
+//         </div>
+//     );
+// }
 
-export const LogsTable = ({ logs = [] }) => {
-    return (
-        <div id="logsTableWrapper">
-            <table id="logsTable">
-                <thead>
-                    <tr id = "firstRow">
-                        <th>Time</th>
-                        <th>Flow #</th>
-                        <th>Predicted Label</th>
-                        <th>Confidence</th>
-                        <th>Inference Latency</th>
-                        <th>Throughput</th>
-                        <th>CPU</th>
-                        <th>Memory</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {logs.length === 0 ? (
-                        <tr>
-                            <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No flows captured yet</td>
-                        </tr>
-                    ) : (
-                        logs.map((log) => (
-                            <tr key={log.flowNumber}>
-                                <td>{log.timestamp}</td>
-                                <td>{log.flowNumber}</td>
-                                <td>{log.label}</td>
-                                <td>{log.confidence}</td>
-                                <td>{log.latency}</td>
-                                <td>{log.throughput}</td>
-                                <td>{log.cpu}</td>
-                                <td>{log.memory}</td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
-        </div>
-    );
-}
+// export const LogsTable = ({ logs = [] }) => {
+//     return (
+//         <div id="logsTableWrapper">
+//             <table id="logsTable">
+//                 <thead>
+//                     <tr id = "firstRow">
+//                         <th>Time</th>
+//                         <th>Flow #</th>
+//                         <th>Predicted Label</th>
+//                         <th>Confidence</th>
+//                         <th>Inference Latency</th>
+//                         <th>Throughput</th>
+//                         <th>CPU</th>
+//                         <th>Memory</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {logs.length === 0 ? (
+//                         <tr>
+//                             <td colSpan="8" style={{textAlign: 'center', color: '#888'}}>No flows captured yet</td>
+//                         </tr>
+//                     ) : (
+//                         logs.map((log) => (
+//                             <tr key={log.flowNumber}>
+//                                 <td>{log.timestamp}</td>
+//                                 <td>{log.flowNumber}</td>
+//                                 <td>{log.label}</td>
+//                                 <td>{log.confidence}</td>
+//                                 <td>{log.latency}</td>
+//                                 <td>{log.throughput}</td>
+//                                 <td>{log.cpu}</td>
+//                                 <td>{log.memory}</td>
+//                             </tr>
+//                         ))
+//                     )}
+//                 </tbody>
+//             </table>
+//         </div>
+//     );
+// }
     //merge code
 
     export const CurrentModelInfo = ()=> {

@@ -4,9 +4,11 @@ div{
 
 #modelTilesList{
   position: absolute;
-  top: 120px;
-  left: 350px;
-
+  top: 215px;
+  left: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 650px;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -82,4 +84,32 @@ div{
   cursor: pointer;
   border-radius: 5px;
   background-color: lightblue;
+}
+
+ #alertTableWrapper{
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+} 
+
+ #logsTableWrapper{
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: white;
+  border-radius: 10px;
+} 
+
+#logHistoryTab{
+  position: absolute;
+  top: 125px;
+  left: 350px;
+  gap: 50px;
+  width: 850px;
+  display: grid;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
