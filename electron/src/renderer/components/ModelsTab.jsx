@@ -8,7 +8,6 @@ export const ModelsTab = ({setSelectedTab})=>{
             <b>
                 <h1 id="modelsTabHeader">Models</h1>
             </b>
-            <ModelsSearchBar/>
             <Tiles setSelectedTab={setSelectedTab}/>
         </>
     );

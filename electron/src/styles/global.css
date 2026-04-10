@@ -268,16 +268,16 @@ line{
 
 #alertsText{
   position: absolute;
-  top: 600px;
+  top: 565px;
   left: 345px;
 }
 
 #dashAlertTable{
   position: absolute;
-  top: 630px;
+  top: 595px;
   left: 345px;
   width: 1075px;
-  max-height: 185px;
+  max-height: 17vh;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: white;
@@ -363,7 +363,7 @@ tr{
   align-items: center;
   gap: 10px;
   position: absolute;
-  top: 530px;
+  top: 510px;
   left: 345px;
 }
 
