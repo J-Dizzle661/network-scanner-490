@@ -47,8 +47,6 @@ const [appSettings, setAppSettings] = useState({
     guid: ''
 });
 
-useEffect(() => {console.log('nonya')});
-
 const MAX_LOG_ENTRIES = 50;
 const MAX_ALERT_ENTRIES = 50;
 const MAX_GRAPH_POINTS = 30;
